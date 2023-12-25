@@ -503,7 +503,7 @@ Board.prototype.changeNormalNode = function(currentNode) {
   let element = document.getElementById(currentNode.id);
   let relevantStatuses = ["start", "target", "object"];
   let unweightedAlgorithms = ["dfs", "bfs"]
-  if (!this.keyDown) {
+if (!this.keyDown) {
     if (!relevantStatuses.includes(currentNode.status)) {
       element.className = currentNode.status !== "wall" ?
         "wall" : "unvisited";
@@ -1009,55 +1009,6 @@ Board.prototype.changeStartNodeImages = function() {
 };
 
 let counter = 1;
-// Board.prototype.toggleTutorialButtons = function() {
-
-//   document.getElementById("skipButton").onclick = () => {
-//     document.getElementById("tutorial").style.display = "none";
-//     this.toggleButtons();
-//   }
-
-//   if (document.getElementById("nextButton")) {
-//     document.getElementById("nextButton").onclick = () => {
-//       if (counter < 9) counter++;
-//       nextPreviousClick();
-//       this.toggleTutorialButtons();
-//     }
-//   }
-
-//   document.getElementById("previousButton").onclick = () => {
-//     if (counter > 1) counter--;
-//     nextPreviousClick();
-//     this.toggleTutorialButtons()
-//   }
-
-//   let board = this;
-//   function nextPreviousClick() {
-//     if (counter === 1) {
-//       document.getElementById("tutorial").innerHTML = `<h3>Welcome to Pathfinding Visualizer!</h3><h6>This short tutorial will walk you through all of the features of this application.</h6><p>If you want to dive right in, feel free to press the "Skip Tutorial" button below. Otherwise, press "Next"!</p><div id="tutorialCounter">1/9</div><img id="mainTutorialImage" src="public/styling/c_icon.png"><button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//     } else if (counter === 2) {
-//       document.getElementById("tutorial").innerHTML = `<h3>What is a pathfinding algorithm?</h3><h6>At its core, a pathfinding algorithm seeks to find the shortest path between two points. This application visualizes various pathfinding algorithms in action, and more!</h6><p>All of the algorithms on this application are adapted for a 2D grid, where 90 degree turns have a "cost" of 1 and movements from a node to another have a "cost" of 1.</p><div id="tutorialCounter">${counter}/9</div><img id="mainTutorialImage" src="public/styling/path.png"><button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//     } else if (counter === 3) {
-//       document.getElementById("tutorial").innerHTML = `<h3>Picking an algorithm</h3><h6>Choose an algorithm from the "Algorithms" drop-down menu.</h6><p>Note that some algorithms are <i><b>unweighted</b></i>, while others are <i><b>weighted</b></i>. Unweighted algorithms do not take turns or weight nodes into account, whereas weighted ones do. Additionally, not all algorithms guarantee the shortest path. </p><img id="secondTutorialImage" src="public/styling/algorithms.png"><div id="tutorialCounter">${counter}/9</div><button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//     } else if (counter === 4) {
-//       document.getElementById("tutorial").innerHTML = `<h3>Meet the algorithms</h3><h6>Not all algorithms are created equal.</h6><ul><li><b>Dijkstra's Algorithm</b> (weighted): the father of pathfinding algorithms; guarantees the shortest path</li><li><b>A* Search</b> (weighted): arguably the best pathfinding algorithm; uses heuristics to guarantee the shortest path much faster than Dijkstra's Algorithm</li><li><b>Greedy Best-first Search</b> (weighted): a faster, more heuristic-heavy version of A*; does not guarantee the shortest path</li><li><b>Swarm Algorithm</b> (weighted): a mixture of Dijkstra's Algorithm and A*; does not guarantee the shortest-path</li><li><b>Convergent Swarm Algorithm</b> (weighted): the faster, more heuristic-heavy version of Swarm; does not guarantee the shortest path</li><li><b>Bidirectional Swarm Algorithm</b> (weighted): Swarm from both sides; does not guarantee the shortest path</li><li><b>Breath-first Search</b> (unweighted): a great algorithm; guarantees the shortest path</li><li><b>Depth-first Search</b> (unweighted): a very bad algorithm for pathfinding; does not guarantee the shortest path</li></ul><div id="tutorialCounter">${counter}/9</div><button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//     } else if (counter === 5) {
-//       document.getElementById("tutorial").innerHTML = `<h3>Adding walls and weights</h3><h6>Click on the grid to add a wall. Click on the grid while pressing W to add a weight. Generate mazes and patterns from the "Mazes & Patterns" drop-down menu.</h6><p>Walls are impenetrable, meaning that a path cannot cross through them. Weights, however, are not impassable. They are simply more "costly" to move through. In this application, moving through a weight node has a "cost" of 15.</p><img id="secondTutorialImage" src="public/styling/walls.gif"><div id="tutorialCounter">${counter}/9</div><button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//     } else if (counter === 6) {
-//       document.getElementById("tutorial").innerHTML = `<h3>Adding a bomb</h3><h6>Click the "Add Bomb" button.</h6><p>Adding a bomb will change the course of the chosen algorithm. In other words, the algorithm will first look for the bomb (in an effort to diffuse it) and will then look for the target node. Note that the Bidirectional Swarm Algorithm does not support adding a bomb.</p><img id="secondTutorialImage" src="public/styling/bomb.png"><div id="tutorialCounter">${counter}/9</div><button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//     } else if (counter === 7) {
-//       document.getElementById("tutorial").innerHTML = `<h3>Dragging nodes</h3><h6>Click and drag the start, bomb, and target nodes to move them.</h6><p>Note that you can drag nodes even after an algorithm has finished running. This will allow you to instantly see different paths.</p><img src="public/styling/dragging.gif"><div id="tutorialCounter">${counter}/9</div><button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//     } else if (counter === 8) {
-//       document.getElementById("tutorial").innerHTML = `<h3>Visualizing and more</h3><h6>Use the navbar buttons to visualize algorithms and to do other stuff!</h6><p>You can clear the current path, clear walls and weights, clear the entire board, and adjust the visualization speed, all from the navbar. If you want to access this tutorial again, click on "Pathfinding Visualizer" in the top left corner of your screen.</p><img id="secondTutorialImage" src="public/styling/navbar.png"><div id="tutorialCounter">${counter}/9</div><button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//     } else if (counter === 9) {
-//       document.getElementById("tutorial").innerHTML = `<h3>Enjoy!</h3><h6>I hope you have just as much fun playing around with this visualization tool as I had building it!</h6><p>If you want to see the source code for this application, check out my <a href="https://github.com/clementmihailescu/Pathfinding-Visualizer">github</a>.</p><div id="tutorialCounter">${counter}/9</div><button id="finishButton" class="btn btn-default navbar-btn" type="button">Finish</button><button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button><button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>`
-//       document.getElementById("finishButton").onclick = () => {
-//         document.getElementById("tutorial").style.display = "none";
-//         board.toggleButtons();
-//       }
-//     }
-//   }
-
-// };
 
 Board.prototype.toggleButtons = function() {
   document.getElementById("refreshButton").onclick = () => {
@@ -1135,31 +1086,7 @@ Board.prototype.toggleButtons = function() {
       document.getElementById("adjustSpeed").innerHTML = 'Speed: Slow<span class="caret"></span>';
     }
 
-    document.getElementById("startStairDemonstration").onclick = () => {
-      this.clearWalls();
-      this.clearPath("clickedButton");
-      this.toggleButtons();
-      stairDemonstration(this);
-      mazeGenerationAnimations(this);
-    }
 
-
-    document.getElementById("startButtonBidirectional").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Bidirectional Swarm!</button>'
-      this.currentAlgorithm = "bidirectional";
-      this.currentHeuristic = "manhattanDistance";
-      if (this.numberOfObjects) {
-        let objectNodeId = this.object;
-        document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add a Bomb</a></li>';
-        document.getElementById(objectNodeId).className = "unvisited";
-        this.object = null;
-        this.numberOfObjects = 0;
-        this.nodes[objectNodeId].status = "unvisited";
-        this.isObject = false;
-      }
-      this.clearPath("clickedButton");
-      this.changeStartNodeImages();
-    }
 
     document.getElementById("startButtonDijkstra").onclick = () => {
       document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Dijkstra\'s!</button>'
@@ -1174,32 +1101,6 @@ Board.prototype.toggleButtons = function() {
       this.changeStartNodeImages();
     }
 
-    // document.getElementById("startButtonAStar2").onclick = () => {
-    //   document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize A*!</button>'
-    //   this.currentAlgorithm = "astar";
-    //   this.currentHeuristic = "poweredManhattanDistance"
-    //   this.changeStartNodeImages();
-    // }
-
-    document.getElementById("startButtonAStar3").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Convergent Swarm!</button>'
-      this.currentAlgorithm = "CLA";
-      this.currentHeuristic = "extraPoweredManhattanDistance"
-      this.changeStartNodeImages();
-    }
-
-    document.getElementById("startButtonGreedy").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Greedy!</button>'
-      this.currentAlgorithm = "greedy";
-      this.changeStartNodeImages();
-    }
-
-    document.getElementById("startButtonBFS").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize BFS!</button>'
-      this.currentAlgorithm = "bfs";
-      this.clearWeights();
-      this.changeStartNodeImages();
-    }
 
     document.getElementById("startButtonDFS").onclick = () => {
       document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize DFS!</button>'
@@ -1313,29 +1214,19 @@ Board.prototype.toggleButtons = function() {
       document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
     }
   document.getElementById("startButtonDFS").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonBFS").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonDijkstra").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonAStar").className = "navbar-inverse navbar-nav";
-    // document.getElementById("startButtonAStar2").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonAStar3").className = "navbar-inverse navbar-nav";
     document.getElementById("adjustFast").className = "navbar-inverse navbar-nav";
     document.getElementById("adjustAverage").className = "navbar-inverse navbar-nav";
     document.getElementById("adjustSlow").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonBidirectional").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonGreedy").className = "navbar-inverse navbar-nav";
     document.getElementById("actualStartButton").style.backgroundColor = "";
 
   } else {
     this.buttonsOn = false;
     document.getElementById("startButtonDFS").onclick = null;
-    document.getElementById("startButtonBFS").onclick = null;
     document.getElementById("startButtonDijkstra").onclick = null;
     document.getElementById("startButtonAStar").onclick = null;
-    document.getElementById("startButtonGreedy").onclick = null;
     document.getElementById("startButtonAddObject").onclick = null;
-    // document.getElementById("startButtonAStar2").onclick = null;
-    document.getElementById("startButtonAStar3").onclick = null;
-    document.getElementById("startButtonBidirectional").onclick = null;
     document.getElementById("startButtonClearPath").onclick = null;
     document.getElementById("startButtonClearWalls").onclick = null;
     document.getElementById("startButtonClearBoard").onclick = null;
@@ -1352,14 +1243,8 @@ Board.prototype.toggleButtons = function() {
     document.getElementById("startButtonClearBoard").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonDFS").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonBFS").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonDijkstra").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonAStar").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonGreedy").className = "navbar-inverse navbar-nav disabledA";
-    // document.getElementById("startButtonAStar2").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonAStar3").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonBidirectional").className = "navbar-inverse navbar-nav disabledA";
-
     document.getElementById("actualStartButton").style.backgroundColor = "rgb(185, 15, 15)";
   }
 
