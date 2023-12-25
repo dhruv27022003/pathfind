@@ -2,6 +2,7 @@ const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearch
 const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
 
 function launchAnimations(board, success, type, object, algorithm, heuristic) {
+  console.log("launchAnimations");
   let nodes = object ? board.objectNodesToAnimate.slice(0) : board.nodesToAnimate.slice(0);
   let speed = board.speed === "fast" ?
     0 : board.speed === "average" ?

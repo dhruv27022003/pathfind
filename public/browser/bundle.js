@@ -8,6 +8,7 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
     0 : board.speed === "average" ?
       100 : 500;
   let shortestNodes;
+  console.log("launchAnimations");
   function timeout(index) {
     setTimeout(function () {
       if (index === nodes.length) {
@@ -175,8 +176,8 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
 module.exports = launchAnimations;
 
 },{"../pathfindingAlgorithms/unweightedSearchAlgorithm":15,"../pathfindingAlgorithms/weightedSearchAlgorithm":16}],2:[function(require,module,exports){
-const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearchAlgorithm");
-const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
+// const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearchAlgorithm");
+// const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
 
 function launchInstantAnimations(board, success, type, object, algorithm, heuristic) {
   let nodes = object ? board.objectNodesToAnimate.slice(0) : board.nodesToAnimate.slice(0);
@@ -377,7 +378,9 @@ Board.prototype.createGrid = function() {
       if (r === Math.floor(this.height / 2) && c === Math.floor(this.width / 4)) {
         newNodeClass = "start";
         this.start = `${newNodeId}`;
-      } else if (r === Math.floor(this.height / 2) && c === Math.floor(3 * this.width / 4)) {
+      // } else if (r === Math.floor(this.height / 2) && c === Math.floor(3 * this.width / 4)) {
+      } else if (r === Math.floor(this.height / 2) && c === (Math.floor(this.width / 4)+4)) {
+       
         newNodeClass = "target";
         this.target = `${newNodeId}`;
       } else {
@@ -724,25 +727,25 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
 
 };
 
-Board.prototype.createMazeOne = function(type) {
-  Object.keys(this.nodes).forEach(node => {
-    let random = Math.random();
-    let currentHTMLNode = document.getElementById(node);
-    let relevantClassNames = ["start", "target", "object"]
-    let randomTwo = type === "wall" ? 0.25 : 0.35;
-    if (random < randomTwo && !relevantClassNames.includes(currentHTMLNode.className)) {
-      if (type === "wall") {
-        currentHTMLNode.className = "wall";
-        this.nodes[node].status = "wall";
-        this.nodes[node].weight = 0;
-      } else if (type === "weight") {
-        currentHTMLNode.className = "unvisited weight";
-        this.nodes[node].status = "unvisited";
-        this.nodes[node].weight = 15;
-      }
-    }
-  });
-};
+// Board.prototype.createMazeOne = function(type) {
+//   Object.keys(this.nodes).forEach(node => {
+//     let random = Math.random();
+//     let currentHTMLNode = document.getElementById(node);
+//     let relevantClassNames = ["start", "target", "object"]
+//     let randomTwo = type === "wall" ? 0.25 : 0.35;
+//     if (random < randomTwo && !relevantClassNames.includes(currentHTMLNode.className)) {
+//       if (type === "wall") {
+//         currentHTMLNode.className = "wall";
+//         this.nodes[node].status = "wall";
+//         this.nodes[node].weight = 0;
+//       } else if (type === "weight") {
+//         currentHTMLNode.className = "unvisited weight";
+//         this.nodes[node].status = "unvisited";
+//         this.nodes[node].weight = 15;
+//       }
+//     }
+//   });
+// };
 
 Board.prototype.clearPath = function(clickedButton) {
   if (clickedButton) {
@@ -758,7 +761,7 @@ Board.prototype.clearPath = function(clickedButton) {
       document.getElementById(object.id).className = "object";
     }
   }
-
+  console.log("clearpath called");
   document.getElementById("startButtonStart").onclick = () => {
     if (!this.currentAlgorithm) {
       document.getElementById("startButtonStart").innerHTML = '<button class="btn btn-default navbar-btn" type="button">Pick an Algorithm!</button>'
@@ -768,25 +771,7 @@ Board.prototype.clearPath = function(clickedButton) {
       let weightedAlgorithms = ["dijkstra", "CLA", "greedy"];
       let unweightedAlgorithms = ["dfs", "bfs"];
       let success;
-      if (this.currentAlgorithm === "bidirectional") {
-        if (!this.numberOfObjects) {
-          success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-          launchAnimations(this, success, "weighted");
-        } else {
-          this.isObject = true;
-        }
-        this.algoDone = true;
-      } else if (this.currentAlgorithm === "astar") {
-        if (!this.numberOfObjects) {
-          success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-          launchAnimations(this, success, "weighted");
-        } else {
-          this.isObject = true;
-          success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-          launchAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
-        }
-        this.algoDone = true;
-      } else if (weightedAlgorithms.includes(this.currentAlgorithm)) {
+      if (weightedAlgorithms.includes(this.currentAlgorithm)) {
         if (!this.numberOfObjects) {
           success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
           launchAnimations(this, success, "weighted");
@@ -877,51 +862,6 @@ Board.prototype.clearNodeStatuses = function() {
   })
 };
 
-Board.prototype.instantAlgorithm = function() {
-  let weightedAlgorithms = ["dijkstra", "CLA", "greedy"];
-  let unweightedAlgorithms = ["dfs", "bfs"];
-  let success;
-  if (this.currentAlgorithm === "bidirectional") {
-    if (!this.numberOfObjects) {
-      success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-    }
-    this.algoDone = true;
-  } else if (this.currentAlgorithm === "astar") {
-    if (!this.numberOfObjects) {
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted", "object", this.currentAlgorithm);
-    }
-    this.algoDone = true;
-  }
-  if (weightedAlgorithms.includes(this.currentAlgorithm)) {
-    if (!this.numberOfObjects) {
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
-    }
-    this.algoDone = true;
-  } else if (unweightedAlgorithms.includes(this.currentAlgorithm)) {
-    if (!this.numberOfObjects) {
-      success = unweightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm);
-      launchInstantAnimations(this, success, "unweighted");
-    } else {
-      this.isObject = true;
-      success = unweightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm);
-      launchInstantAnimations(this, success, "unweighted", "object", this.currentAlgorithm);
-    }
-    this.algoDone = true;
-  }
-};
 
 Board.prototype.redoAlgorithm = function() {
   this.clearPath();
@@ -972,11 +912,7 @@ Board.prototype.changeStartNodeImages = function() {
     name = "Bidirectional Swarm Algorithm";
   }
   if (unweighted.includes(this.currentAlgorithm)) {
-    if (this.currentAlgorithm === "dfs") {
-      document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>unweighted</b></i> and <i><b>does not guarantee</b></i> the shortest path!`;
-    } else {
-      document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>unweighted</b></i> and <i><b>guarantees</b></i> the shortest path!`;
-    }
+
     document.getElementById("weightLegend").className = "strikethrough";
     for (let i = 0; i < 14; i++) {
       let j = i.toString();
@@ -984,9 +920,7 @@ Board.prototype.changeStartNodeImages = function() {
       document.styleSheets["1"].rules[j].style.backgroundImage = backgroundImage.replace("triangle", "spaceship");
     }
   } else {
-    if (this.currentAlgorithm === "greedy" || this.currentAlgorithm === "CLA") {
-      document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>does not guarantee</b></i> the shortest path!`;
-    }
+
     document.getElementById("weightLegend").className = "";
     for (let i = 0; i < 14; i++) {
       let j = i.toString();
@@ -1008,17 +942,18 @@ Board.prototype.changeStartNodeImages = function() {
   }
 };
 
-let counter = 1;
 
 Board.prototype.toggleButtons = function() {
   document.getElementById("refreshButton").onclick = () => {
     window.location.reload(true);
   }
-
+  console.log("toggleButtons initial call");
+  this.speed = "fast";
   if (!this.buttonsOn) {
     this.buttonsOn = true;
 
     document.getElementById("startButtonStart").onclick = () => {
+      console.log("toggleButtons called");
       if (!this.currentAlgorithm) {
         document.getElementById("startButtonStart").innerHTML = '<button class="btn btn-default navbar-btn" type="button">Pick an Algorithm!</button>'
       } else {
@@ -1027,31 +962,16 @@ Board.prototype.toggleButtons = function() {
         let weightedAlgorithms = ["dijkstra", "CLA", "CLA", "greedy"];
         let unweightedAlgorithms = ["dfs", "bfs"];
         let success;
-        if (this.currentAlgorithm === "bidirectional") {
+        console.log(this.currentAlgorithm," yooooo   ",!this.numberOfObjects);
+        if (weightedAlgorithms.includes(this.currentAlgorithm)) {
           if (!this.numberOfObjects) {
-            success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-            launchAnimations(this, success, "weighted");
-          } else {
-            this.isObject = true;
-            success = bidirectional(this.nodes, this.start, this.object, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-            launchAnimations(this, success, "weighted");
-          }
-          this.algoDone = true;
-        } else if (this.currentAlgorithm === "astar") {
-          if (!this.numberOfObjects) {
+            console.log("goin..1o..")
             success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
+            console.log(success)
+            console.log("goin..1o..")
             launchAnimations(this, success, "weighted");
           } else {
-            this.isObject = true;
-            success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-            launchAnimations(this, success, "weighted", "object", this.currentAlgorithm);
-          }
-          this.algoDone = true;
-        } else if (weightedAlgorithms.includes(this.currentAlgorithm)) {
-          if (!this.numberOfObjects) {
-            success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-            launchAnimations(this, success, "weighted");
-          } else {
+            console.log("goin...11 ")
             this.isObject = true;
             success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
             launchAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
@@ -1071,35 +991,12 @@ Board.prototype.toggleButtons = function() {
       }
     }
 
-    document.getElementById("adjustFast").onclick = () => {
-      this.speed = "fast";
-      document.getElementById("adjustSpeed").innerHTML = 'Speed: Fast<span class="caret"></span>';
-    }
-
-    document.getElementById("adjustAverage").onclick = () => {
-      this.speed = "average";
-      document.getElementById("adjustSpeed").innerHTML = 'Speed: Average<span class="caret"></span>';
-    }
-
-    document.getElementById("adjustSlow").onclick = () => {
-      this.speed = "slow";
-      document.getElementById("adjustSpeed").innerHTML = 'Speed: Slow<span class="caret"></span>';
-    }
-
-
-
     document.getElementById("startButtonDijkstra").onclick = () => {
       document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Dijkstra\'s!</button>'
       this.currentAlgorithm = "dijkstra";
       this.changeStartNodeImages();
     }
 
-    document.getElementById("startButtonAStar").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Swarm!</button>'
-      this.currentAlgorithm = "CLA";
-      this.currentHeuristic = "manhattanDistance"
-      this.changeStartNodeImages();
-    }
 
 
     document.getElementById("startButtonDFS").onclick = () => {
@@ -1266,456 +1163,104 @@ window.onkeyup = (e) => {
   newBoard.keyDown = false;
 }
 
-},{"./animations/launchAnimations":1,"./animations/launchInstantAnimations":2,"./animations/mazeGenerationAnimations":3,"./getDistance":5,"./mazeAlgorithms/otherMaze":6,"./mazeAlgorithms/otherOtherMaze":7,"./mazeAlgorithms/recursiveDivisionMaze":8,"./mazeAlgorithms/simpleDemonstration":9,"./mazeAlgorithms/stairDemonstration":10,"./mazeAlgorithms/weightsDemonstration":11,"./node":12,"./pathfindingAlgorithms/astar":13,"./pathfindingAlgorithms/bidirectional":14,"./pathfindingAlgorithms/unweightedSearchAlgorithm":15,"./pathfindingAlgorithms/weightedSearchAlgorithm":16}],5:[function(require,module,exports){
-function getDistance(nodeOne, nodeTwo) {
-  let currentCoordinates = nodeOne.id.split("-");
-  let targetCoordinates = nodeTwo.id.split("-");
-  let x1 = parseInt(currentCoordinates[0]);
-  let y1 = parseInt(currentCoordinates[1]);
-  let x2 = parseInt(targetCoordinates[0]);
-  let y2 = parseInt(targetCoordinates[1]);
-  if (x2 < x1) {
-    if (nodeOne.direction === "up") {
-      return [1, ["f"], "up"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["l", "f"], "up"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["r", "f"], "up"];
-    } else if (nodeOne.direction === "down") {
-      return [3, ["r", "r", "f"], "up"];
-    }
-  } else if (x2 > x1) {
-    if (nodeOne.direction === "up") {
-      return [3, ["r", "r", "f"], "down"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["r", "f"], "down"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["l", "f"], "down"];
-    } else if (nodeOne.direction === "down") {
-      return [1, ["f"], "down"];
-    }
-  }
-  if (y2 < y1) {
-    if (nodeOne.direction === "up") {
-      return [2, ["l", "f"], "left"];
-    } else if (nodeOne.direction === "right") {
-      return [3, ["l", "l", "f"], "left"];
-    } else if (nodeOne.direction === "left") {
-      return [1, ["f"], "left"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["r", "f"], "left"];
-    }
-  } else if (y2 > y1) {
-    if (nodeOne.direction === "up") {
-      return [2, ["r", "f"], "right"];
-    } else if (nodeOne.direction === "right") {
-      return [1, ["f"], "right"];
-    } else if (nodeOne.direction === "left") {
-      return [3, ["r", "r", "f"], "right"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["l", "f"], "right"];
-    }
-  }
-}
+},{"./animations/launchAnimations":
+1,"./animations/launchInstantAnimations":
+2,"./animations/mazeGenerationAnimations":3,"./getDistance":5,"./mazeAlgorithms/otherMaze":6,"./mazeAlgorithms/otherOtherMaze":7,"./mazeAlgorithms/recursiveDivisionMaze":8,"./mazeAlgorithms/simpleDemonstration":9,"./mazeAlgorithms/stairDemonstration":10,"./mazeAlgorithms/weightsDemonstration":11,"./node":12,"./pathfindingAlgorithms/astar":13,"./pathfindingAlgorithms/bidirectional":14,"./pathfindingAlgorithms/unweightedSearchAlgorithm":15,"./pathfindingAlgorithms/weightedSearchAlgorithm":16}],
+5:[function(require,module,exports){
+// function getDistance(nodeOne, nodeTwo) {
+//   console.log("getdistance called")
+//   let currentCoordinates = nodeOne.id.split("-");
+//   let targetCoordinates = nodeTwo.id.split("-");
+//   let x1 = parseInt(currentCoordinates[0]);
+//   let y1 = parseInt(currentCoordinates[1]);
+//   let x2 = parseInt(targetCoordinates[0]);
+//   let y2 = parseInt(targetCoordinates[1]);
+//   if (x2 < x1) {
+//     if (nodeOne.direction === "up") {
+//       return [1, ["f"], "up"];
+//     } else if (nodeOne.direction === "right") {
+//       return [2, ["l", "f"], "up"];
+//     } else if (nodeOne.direction === "left") {
+//       return [2, ["r", "f"], "up"];
+//     } else if (nodeOne.direction === "down") {
+//       return [3, ["r", "r", "f"], "up"];
+//     }
+//   } else if (x2 > x1) {
+//     if (nodeOne.direction === "up") {
+//       return [3, ["r", "r", "f"], "down"];
+//     } else if (nodeOne.direction === "right") {
+//       return [2, ["r", "f"], "down"];
+//     } else if (nodeOne.direction === "left") {
+//       return [2, ["l", "f"], "down"];
+//     } else if (nodeOne.direction === "down") {
+//       return [1, ["f"], "down"];
+//     }
+//   }
+//   if (y2 < y1) {
+//     if (nodeOne.direction === "up") {
+//       return [2, ["l", "f"], "left"];
+//     } else if (nodeOne.direction === "right") {
+//       return [3, ["l", "l", "f"], "left"];
+//     } else if (nodeOne.direction === "left") {
+//       return [1, ["f"], "left"];
+//     } else if (nodeOne.direction === "down") {
+//       return [2, ["r", "f"], "left"];
+//     }
+//   } else if (y2 > y1) {
+//     if (nodeOne.direction === "up") {
+//       return [2, ["r", "f"], "right"];
+//     } else if (nodeOne.direction === "right") {
+//       return [1, ["f"], "right"];
+//     } else if (nodeOne.direction === "left") {
+//       return [3, ["r", "r", "f"], "right"];
+//     } else if (nodeOne.direction === "down") {
+//       return [2, ["l", "f"], "right"];
+//     }
+//   }
+// }
 
-module.exports = getDistance;
+// module.exports = getDistance;
 
-},{}],6:[function(require,module,exports){
-function recursiveDivisionMaze(board, rowStart, rowEnd, colStart, colEnd, orientation, surroundingWalls) {
-  if (rowEnd < rowStart || colEnd < colStart) {
-    return;
-  }
-  if (!surroundingWalls) {
-    let relevantIds = [board.start, board.target];
-    if (board.object) relevantIds.push(board.object);
-    Object.keys(board.nodes).forEach(node => {
-      if (!relevantIds.includes(node)) {
-        let r = parseInt(node.split("-")[0]);
-        let c = parseInt(node.split("-")[1]);
-        if (r === 0 || c === 0 || r === board.height - 1 || c === board.width - 1) {
-          let currentHTMLNode = document.getElementById(node);
-          board.wallsToAnimate.push(currentHTMLNode);
-          board.nodes[node].status = "wall";
-        }
-      }
-    });
-    surroundingWalls = true;
-  }
-  if (orientation === "horizontal") {
-    let possibleRows = [];
-    for (let number = rowStart; number <= rowEnd; number += 2) {
-      possibleRows.push(number);
-    }
-    let possibleCols = [];
-    for (let number = colStart - 1; number <= colEnd + 1; number += 2) {
-      possibleCols.push(number);
-    }
-    let randomRowIndex = Math.floor(Math.random() * possibleRows.length);
-    let randomColIndex = Math.floor(Math.random() * possibleCols.length);
-    let currentRow = possibleRows[randomRowIndex];
-    let colRandom = possibleCols[randomColIndex];
-    Object.keys(board.nodes).forEach(node => {
-      let r = parseInt(node.split("-")[0]);
-      let c = parseInt(node.split("-")[1]);
-      if (r === currentRow && c !== colRandom && c >= colStart - 1 && c <= colEnd + 1) {
-        let currentHTMLNode = document.getElementById(node);
-        if (currentHTMLNode.className !== "start" && currentHTMLNode.className !== "target" && currentHTMLNode.className !== "object") {
-          board.wallsToAnimate.push(currentHTMLNode);
-          board.nodes[node].status = "wall";
-        }
-      }
-    });
-    if (currentRow - 2 - rowStart > colEnd - colStart) {
-      recursiveDivisionMaze(board, rowStart, currentRow - 2, colStart, colEnd, orientation, surroundingWalls);
-    } else {
-      recursiveDivisionMaze(board, rowStart, currentRow - 2, colStart, colEnd, "vertical", surroundingWalls);
-    }
-    if (rowEnd - (currentRow + 2) > colEnd - colStart) {
-      recursiveDivisionMaze(board, currentRow + 2, rowEnd, colStart, colEnd, "vertical", surroundingWalls);
-    } else {
-      recursiveDivisionMaze(board, currentRow + 2, rowEnd, colStart, colEnd, "vertical", surroundingWalls);
-    }
-  } else {
-    let possibleCols = [];
-    for (let number = colStart; number <= colEnd; number += 2) {
-      possibleCols.push(number);
-    }
-    let possibleRows = [];
-    for (let number = rowStart - 1; number <= rowEnd + 1; number += 2) {
-      possibleRows.push(number);
-    }
-    let randomColIndex = Math.floor(Math.random() * possibleCols.length);
-    let randomRowIndex = Math.floor(Math.random() * possibleRows.length);
-    let currentCol = possibleCols[randomColIndex];
-    let rowRandom = possibleRows[randomRowIndex];
-    Object.keys(board.nodes).forEach(node => {
-      let r = parseInt(node.split("-")[0]);
-      let c = parseInt(node.split("-")[1]);
-      if (c === currentCol && r !== rowRandom && r >= rowStart - 1 && r <= rowEnd + 1) {
-        let currentHTMLNode = document.getElementById(node);
-        if (currentHTMLNode.className !== "start" && currentHTMLNode.className !== "target" && currentHTMLNode.className !== "object") {
-          board.wallsToAnimate.push(currentHTMLNode);
-          board.nodes[node].status = "wall";
-        }
-      }
-    });
-    if (rowEnd - rowStart > currentCol - 2 - colStart) {
-      recursiveDivisionMaze(board, rowStart, rowEnd, colStart, currentCol - 2, "vertical", surroundingWalls);
-    } else {
-      recursiveDivisionMaze(board, rowStart, rowEnd, colStart, currentCol - 2, orientation, surroundingWalls);
-    }
-    if (rowEnd - rowStart > colEnd - (currentCol + 2)) {
-      recursiveDivisionMaze(board, rowStart, rowEnd, currentCol + 2, colEnd, "horizontal", surroundingWalls);
-    } else {
-      recursiveDivisionMaze(board, rowStart, rowEnd, currentCol + 2, colEnd, orientation, surroundingWalls);
-    }
-  }
-};
+},{}],
 
-module.exports = recursiveDivisionMaze;
+6:[function(require,module,exports){
 
-},{}],7:[function(require,module,exports){
-function recursiveDivisionMaze(board, rowStart, rowEnd, colStart, colEnd, orientation, surroundingWalls) {
-  if (rowEnd < rowStart || colEnd < colStart) {
-    return;
-  }
-  if (!surroundingWalls) {
-    let relevantIds = [board.start, board.target];
-    if (board.object) relevantIds.push(board.object);
-    Object.keys(board.nodes).forEach(node => {
-      if (!relevantIds.includes(node)) {
-        let r = parseInt(node.split("-")[0]);
-        let c = parseInt(node.split("-")[1]);
-        if (r === 0 || c === 0 || r === board.height - 1 || c === board.width - 1) {
-          let currentHTMLNode = document.getElementById(node);
-          board.wallsToAnimate.push(currentHTMLNode);
-          board.nodes[node].status = "wall";
-        }
-      }
-    });
-    surroundingWalls = true;
-  }
-  if (orientation === "horizontal") {
-    let possibleRows = [];
-    for (let number = rowStart; number <= rowEnd; number += 2) {
-      possibleRows.push(number);
-    }
-    let possibleCols = [];
-    for (let number = colStart - 1; number <= colEnd + 1; number += 2) {
-      possibleCols.push(number);
-    }
-    let randomRowIndex = Math.floor(Math.random() * possibleRows.length);
-    let randomColIndex = Math.floor(Math.random() * possibleCols.length);
-    let currentRow = possibleRows[randomRowIndex];
-    let colRandom = possibleCols[randomColIndex];
-    Object.keys(board.nodes).forEach(node => {
-      let r = parseInt(node.split("-")[0]);
-      let c = parseInt(node.split("-")[1]);
-      if (r === currentRow && c !== colRandom && c >= colStart - 1 && c <= colEnd + 1) {
-        let currentHTMLNode = document.getElementById(node);
-        if (currentHTMLNode.className !== "start" && currentHTMLNode.className !== "target" && currentHTMLNode.className !== "object") {
-          board.wallsToAnimate.push(currentHTMLNode);
-          board.nodes[node].status = "wall";
-        }
-      }
-    });
-    if (currentRow - 2 - rowStart > colEnd - colStart) {
-      recursiveDivisionMaze(board, rowStart, currentRow - 2, colStart, colEnd, orientation, surroundingWalls);
-    } else {
-      recursiveDivisionMaze(board, rowStart, currentRow - 2, colStart, colEnd, "horizontal", surroundingWalls);
-    }
-    if (rowEnd - (currentRow + 2) > colEnd - colStart) {
-      recursiveDivisionMaze(board, currentRow + 2, rowEnd, colStart, colEnd, orientation, surroundingWalls);
-    } else {
-      recursiveDivisionMaze(board, currentRow + 2, rowEnd, colStart, colEnd, "vertical", surroundingWalls);
-    }
-  } else {
-    let possibleCols = [];
-    for (let number = colStart; number <= colEnd; number += 2) {
-      possibleCols.push(number);
-    }
-    let possibleRows = [];
-    for (let number = rowStart - 1; number <= rowEnd + 1; number += 2) {
-      possibleRows.push(number);
-    }
-    let randomColIndex = Math.floor(Math.random() * possibleCols.length);
-    let randomRowIndex = Math.floor(Math.random() * possibleRows.length);
-    let currentCol = possibleCols[randomColIndex];
-    let rowRandom = possibleRows[randomRowIndex];
-    Object.keys(board.nodes).forEach(node => {
-      let r = parseInt(node.split("-")[0]);
-      let c = parseInt(node.split("-")[1]);
-      if (c === currentCol && r !== rowRandom && r >= rowStart - 1 && r <= rowEnd + 1) {
-        let currentHTMLNode = document.getElementById(node);
-        if (currentHTMLNode.className !== "start" && currentHTMLNode.className !== "target" && currentHTMLNode.className !== "object") {
-          board.wallsToAnimate.push(currentHTMLNode);
-          board.nodes[node].status = "wall";
-        }
-      }
-    });
-    if (rowEnd - rowStart > currentCol - 2 - colStart) {
-      recursiveDivisionMaze(board, rowStart, rowEnd, colStart, currentCol - 2, "horizontal", surroundingWalls);
-    } else {
-      recursiveDivisionMaze(board, rowStart, rowEnd, colStart, currentCol - 2, "horizontal", surroundingWalls);
-    }
-    if (rowEnd - rowStart > colEnd - (currentCol + 2)) {
-      recursiveDivisionMaze(board, rowStart, rowEnd, currentCol + 2, colEnd, "horizontal", surroundingWalls);
-    } else {
-      recursiveDivisionMaze(board, rowStart, rowEnd, currentCol + 2, colEnd, orientation, surroundingWalls);
-    }
-  }
-};
+},{}],
+7:[function(require,module,exports){
 
-module.exports = recursiveDivisionMaze;
+},{}],
+8:[function(require,module,exports){
+},{}],
+9:[function(require,module,exports){
+// function simpleDemonstration(board) {
+//   let currentIdY = board.width - 10;
+//   for (let counter = 0; counter < 7; counter++) {
+//     let currentIdXOne = Math.floor(board.height / 2) - counter;
+//     let currentIdXTwo = Math.floor(board.height / 2) + counter;
+//     let currentIdOne = `${currentIdXOne}-${currentIdY}`;
+//     let currentIdTwo = `${currentIdXTwo}-${currentIdY}`;
+//     let currentElementOne = document.getElementById(currentIdOne);
+//     let currentElementTwo = document.getElementById(currentIdTwo);
+//     board.wallsToAnimate.push(currentElementOne);
+//     board.wallsToAnimate.push(currentElementTwo);
+//     let currentNodeOne = board.nodes[currentIdOne];
+//     let currentNodeTwo = board.nodes[currentIdTwo];
+//     currentNodeOne.status = "wall";
+//     currentNodeOne.weight = 0;
+//     currentNodeTwo.status = "wall";
+//     currentNodeTwo.weight = 0;
+//   }
+// }
 
-},{}],8:[function(require,module,exports){
-function recursiveDivisionMaze(board, rowStart, rowEnd, colStart, colEnd, orientation, surroundingWalls, type) {
-  if (rowEnd < rowStart || colEnd < colStart) {
-    return;
-  }
-  if (!surroundingWalls) {
-    let relevantIds = [board.start, board.target];
-    if (board.object) relevantIds.push(board.object);
-    Object.keys(board.nodes).forEach(node => {
-      if (!relevantIds.includes(node)) {
-        let r = parseInt(node.split("-")[0]);
-        let c = parseInt(node.split("-")[1]);
-        if (r === 0 || c === 0 || r === board.height - 1 || c === board.width - 1) {
-          let currentHTMLNode = document.getElementById(node);
-          board.wallsToAnimate.push(currentHTMLNode);
-          if (type === "wall") {
-            board.nodes[node].status = "wall";
-            board.nodes[node].weight = 0;
-          } else if (type === "weight") {
-            board.nodes[node].status = "unvisited";
-            board.nodes[node].weight = 15;
-          }
-        }
-      }
-    });
-    surroundingWalls = true;
-  }
-  if (orientation === "horizontal") {
-    let possibleRows = [];
-    for (let number = rowStart; number <= rowEnd; number += 2) {
-      possibleRows.push(number);
-    }
-    let possibleCols = [];
-    for (let number = colStart - 1; number <= colEnd + 1; number += 2) {
-      possibleCols.push(number);
-    }
-    let randomRowIndex = Math.floor(Math.random() * possibleRows.length);
-    let randomColIndex = Math.floor(Math.random() * possibleCols.length);
-    let currentRow = possibleRows[randomRowIndex];
-    let colRandom = possibleCols[randomColIndex];
-    Object.keys(board.nodes).forEach(node => {
-      let r = parseInt(node.split("-")[0]);
-      let c = parseInt(node.split("-")[1]);
-      if (r === currentRow && c !== colRandom && c >= colStart - 1 && c <= colEnd + 1) {
-        let currentHTMLNode = document.getElementById(node);
-        if (currentHTMLNode.className !== "start" && currentHTMLNode.className !== "target" && currentHTMLNode.className !== "object") {
-          board.wallsToAnimate.push(currentHTMLNode);
-          if (type === "wall") {
-            board.nodes[node].status = "wall";
-            board.nodes[node].weight = 0;
-          } else if (type === "weight") {
-            board.nodes[node].status = "unvisited";
-            board.nodes[node].weight = 15;
-          }        }
-      }
-    });
-    if (currentRow - 2 - rowStart > colEnd - colStart) {
-      recursiveDivisionMaze(board, rowStart, currentRow - 2, colStart, colEnd, orientation, surroundingWalls, type);
-    } else {
-      recursiveDivisionMaze(board, rowStart, currentRow - 2, colStart, colEnd, "vertical", surroundingWalls, type);
-    }
-    if (rowEnd - (currentRow + 2) > colEnd - colStart) {
-      recursiveDivisionMaze(board, currentRow + 2, rowEnd, colStart, colEnd, orientation, surroundingWalls, type);
-    } else {
-      recursiveDivisionMaze(board, currentRow + 2, rowEnd, colStart, colEnd, "vertical", surroundingWalls, type);
-    }
-  } else {
-    let possibleCols = [];
-    for (let number = colStart; number <= colEnd; number += 2) {
-      possibleCols.push(number);
-    }
-    let possibleRows = [];
-    for (let number = rowStart - 1; number <= rowEnd + 1; number += 2) {
-      possibleRows.push(number);
-    }
-    let randomColIndex = Math.floor(Math.random() * possibleCols.length);
-    let randomRowIndex = Math.floor(Math.random() * possibleRows.length);
-    let currentCol = possibleCols[randomColIndex];
-    let rowRandom = possibleRows[randomRowIndex];
-    Object.keys(board.nodes).forEach(node => {
-      let r = parseInt(node.split("-")[0]);
-      let c = parseInt(node.split("-")[1]);
-      if (c === currentCol && r !== rowRandom && r >= rowStart - 1 && r <= rowEnd + 1) {
-        let currentHTMLNode = document.getElementById(node);
-        if (currentHTMLNode.className !== "start" && currentHTMLNode.className !== "target" && currentHTMLNode.className !== "object") {
-          board.wallsToAnimate.push(currentHTMLNode);
-          if (type === "wall") {
-            board.nodes[node].status = "wall";
-            board.nodes[node].weight = 0;
-          } else if (type === "weight") {
-            board.nodes[node].status = "unvisited";
-            board.nodes[node].weight = 15;
-          }        }
-      }
-    });
-    if (rowEnd - rowStart > currentCol - 2 - colStart) {
-      recursiveDivisionMaze(board, rowStart, rowEnd, colStart, currentCol - 2, "horizontal", surroundingWalls, type);
-    } else {
-      recursiveDivisionMaze(board, rowStart, rowEnd, colStart, currentCol - 2, orientation, surroundingWalls, type);
-    }
-    if (rowEnd - rowStart > colEnd - (currentCol + 2)) {
-      recursiveDivisionMaze(board, rowStart, rowEnd, currentCol + 2, colEnd, "horizontal", surroundingWalls, type);
-    } else {
-      recursiveDivisionMaze(board, rowStart, rowEnd, currentCol + 2, colEnd, orientation, surroundingWalls, type);
-    }
-  }
-};
-
-module.exports = recursiveDivisionMaze;
-
-},{}],9:[function(require,module,exports){
-function simpleDemonstration(board) {
-  let currentIdY = board.width - 10;
-  for (let counter = 0; counter < 7; counter++) {
-    let currentIdXOne = Math.floor(board.height / 2) - counter;
-    let currentIdXTwo = Math.floor(board.height / 2) + counter;
-    let currentIdOne = `${currentIdXOne}-${currentIdY}`;
-    let currentIdTwo = `${currentIdXTwo}-${currentIdY}`;
-    let currentElementOne = document.getElementById(currentIdOne);
-    let currentElementTwo = document.getElementById(currentIdTwo);
-    board.wallsToAnimate.push(currentElementOne);
-    board.wallsToAnimate.push(currentElementTwo);
-    let currentNodeOne = board.nodes[currentIdOne];
-    let currentNodeTwo = board.nodes[currentIdTwo];
-    currentNodeOne.status = "wall";
-    currentNodeOne.weight = 0;
-    currentNodeTwo.status = "wall";
-    currentNodeTwo.weight = 0;
-  }
-}
-
-module.exports = simpleDemonstration;
+// module.exports = simpleDemonstration;
 
 },{}],10:[function(require,module,exports){
-function stairDemonstration(board) {
-  let currentIdX = board.height - 1;
-  let currentIdY = 0;
-  let relevantStatuses = ["start", "target", "object"];
-  while (currentIdX > 0 && currentIdY < board.width) {
-    let currentId = `${currentIdX}-${currentIdY}`;
-    let currentNode = board.nodes[currentId];
-    let currentHTMLNode = document.getElementById(currentId);
-    if (!relevantStatuses.includes(currentNode.status)) {
-      currentNode.status = "wall";
-      board.wallsToAnimate.push(currentHTMLNode);
-    }
-    currentIdX--;
-    currentIdY++;
-  }
-  while (currentIdX < board.height - 2 && currentIdY < board.width) {
-    let currentId = `${currentIdX}-${currentIdY}`;
-    let currentNode = board.nodes[currentId];
-    let currentHTMLNode = document.getElementById(currentId);
-    if (!relevantStatuses.includes(currentNode.status)) {
-      currentNode.status = "wall";
-      board.wallsToAnimate.push(currentHTMLNode);
-    }
-    currentIdX++;
-    currentIdY++;
-  }
-  while (currentIdX > 0 && currentIdY < board.width - 1) {
-    let currentId = `${currentIdX}-${currentIdY}`;
-    let currentNode = board.nodes[currentId];
-    let currentHTMLNode = document.getElementById(currentId);
-    if (!relevantStatuses.includes(currentNode.status)) {
-      currentNode.status = "wall";
-      board.wallsToAnimate.push(currentHTMLNode);
-    }
-    currentIdX--;
-    currentIdY++;
-  }
-}
-
-module.exports = stairDemonstration;
 
 },{}],11:[function(require,module,exports){
-function weightsDemonstration(board) {
-  let currentIdX = board.height - 1;
-  let currentIdY = 35;
-  while (currentIdX > 5) {
-    let currentId = `${currentIdX}-${currentIdY}`;
-    let currentElement = document.getElementById(currentId);
-    board.wallsToAnimate.push(currentElement);
-    let currentNode = board.nodes[currentId];
-    currentNode.status = "wall";
-    currentNode.weight = 0;
-    currentIdX--;
-  }
-  for (let currentIdX = board.height - 2; currentIdX > board.height - 11; currentIdX--) {
-    for (let currentIdY = 1; currentIdY < 35; currentIdY++) {
-      let currentId = `${currentIdX}-${currentIdY}`;
-      let currentElement = document.getElementById(currentId);
-      board.wallsToAnimate.push(currentElement);
-      let currentNode = board.nodes[currentId];
-      if (currentIdX === board.height - 2 && currentIdY < 35 && currentIdY > 26) {
-        currentNode.status = "wall";
-        currentNode.weight = 0;
-      } else {
-        currentNode.status = "unvisited";
-        currentNode.weight = 15;
-      }
-    }
-  }
-}
 
-module.exports = weightsDemonstration;
+},{}],
 
-},{}],12:[function(require,module,exports){
+12:[function(require,module,exports){
 function Node(id, status) {
   this.id = id;
   this.status = status;
@@ -1744,7 +1289,9 @@ function Node(id, status) {
 
 module.exports = Node;
 
-},{}],13:[function(require,module,exports){
+},{}],
+
+13:[function(require,module,exports){
 function astar(nodes, start, target, nodesToAnimate, boardArray, name, heuristic) {
   if (!start || !target || start === target) {
     return false;
@@ -2009,7 +1556,9 @@ function manhattanDistance(nodeOne, nodeTwo) {
 
 module.exports = astar;
 
-},{}],14:[function(require,module,exports){
+},{}],
+
+14:[function(require,module,exports){
 const astar = require("./astar");
 
 function bidirectional(nodes, start, target, nodesToAnimate, boardArray, name, heuristic, board) {
@@ -2252,164 +1801,18 @@ function manhattanDistance(nodeOne, nodeTwo) {
   return (xChange + yChange);
 }
 
-function weightedManhattanDistance(nodeOne, nodeTwo, nodes) {
-  let nodeOneCoordinates = nodeOne.id.split("-").map(ele => parseInt(ele));
-  let nodeTwoCoordinates = nodeTwo.id.split("-").map(ele => parseInt(ele));
-  let xChange = Math.abs(nodeOneCoordinates[0] - nodeTwoCoordinates[0]);
-  let yChange = Math.abs(nodeOneCoordinates[1] - nodeTwoCoordinates[1]);
 
-  if (nodeOneCoordinates[0] < nodeTwoCoordinates[0] && nodeOneCoordinates[1] < nodeTwoCoordinates[1]) {
-
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] < nodeTwoCoordinates[0] && nodeOneCoordinates[1] >= nodeTwoCoordinates[1]) {
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] >= nodeTwoCoordinates[0] && nodeOneCoordinates[1] < nodeTwoCoordinates[1]) {
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] >= nodeTwoCoordinates[0] && nodeOneCoordinates[1] >= nodeTwoCoordinates[1]) {
-      let additionalxChange = 0,
-          additionalyChange = 0;
-      for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-        let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-        let currentNode = nodes[currentId];
-        additionalxChange += currentNode.weight;
-      }
-      for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-        let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-        let currentNode = nodes[currentId];
-        additionalyChange += currentNode.weight;
-      }
-
-      let otherAdditionalxChange = 0,
-          otherAdditionalyChange = 0;
-      for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-        let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-        let currentNode = nodes[currentId];
-        additionalyChange += currentNode.weight;
-      }
-      for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-        let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-        let currentNode = nodes[currentId];
-        additionalxChange += currentNode.weight;
-      }
-
-      if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-        xChange += additionalxChange;
-        yChange += additionalyChange;
-      } else {
-        xChange += otherAdditionalxChange;
-        yChange += otherAdditionalyChange;
-      }
-    }
-
-
-  return xChange + yChange;
-
-
-}
 
 module.exports = bidirectional;
 
-},{"./astar":13}],15:[function(require,module,exports){
+},{"./astar":13}],
+
+15:[function(require,module,exports){
 function unweightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArray, name) {
   if (!start || !target || start === target) {
     return false;
   }
+  console.log("running");
   let structure = [nodes[start]];
   let exploredNodes = {start: true};
   while (structure.length) {
@@ -2483,16 +1886,18 @@ function getNeighbors(id, nodes, boardArray, name) {
 
 module.exports = unweightedSearchAlgorithm;
 
-},{}],16:[function(require,module,exports){
+},{}],
+
+16:[function(require,module,exports){
 const astar = require("./astar");
 
 function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArray, name, heuristic) {
-  if (name === "astar") return astar(nodes, start, target, nodesToAnimate, boardArray, name)
   if (!start || !target || start === target) {
     return false;
   }
   nodes[start].distance = 0;
   nodes[start].direction = "right";
+  console.log(nodes)
   let unvisitedNodes = Object.keys(nodes);
   while (unvisitedNodes.length) {
     let currentNode = closestNode(nodes, unvisitedNodes);
@@ -2657,154 +2062,6 @@ function manhattanDistance(nodeOne, nodeTwo) {
   return (xChange + yChange);
 }
 
-function weightedManhattanDistance(nodeOne, nodeTwo, nodes) {
-  let nodeOneCoordinates = nodeOne.id.split("-").map(ele => parseInt(ele));
-  let nodeTwoCoordinates = nodeTwo.id.split("-").map(ele => parseInt(ele));
-  let xChange = Math.abs(nodeOneCoordinates[0] - nodeTwoCoordinates[0]);
-  let yChange = Math.abs(nodeOneCoordinates[1] - nodeTwoCoordinates[1]);
-
-  if (nodeOneCoordinates[0] < nodeTwoCoordinates[0] && nodeOneCoordinates[1] < nodeTwoCoordinates[1]) {
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] < nodeTwoCoordinates[0] && nodeOneCoordinates[1] >= nodeTwoCoordinates[1]) {
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] >= nodeTwoCoordinates[0] && nodeOneCoordinates[1] < nodeTwoCoordinates[1]) {
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] >= nodeTwoCoordinates[0] && nodeOneCoordinates[1] >= nodeTwoCoordinates[1]) {
-      let additionalxChange = 0,
-          additionalyChange = 0;
-      for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-        let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-        let currentNode = nodes[currentId];
-        additionalxChange += currentNode.weight;
-      }
-      for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-        let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-        let currentNode = nodes[currentId];
-        additionalyChange += currentNode.weight;
-      }
-
-      let otherAdditionalxChange = 0,
-          otherAdditionalyChange = 0;
-      for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-        let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-        let currentNode = nodes[currentId];
-        additionalyChange += currentNode.weight;
-      }
-      for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-        let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-        let currentNode = nodes[currentId];
-        additionalxChange += currentNode.weight;
-      }
-
-      if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-        xChange += additionalxChange;
-        yChange += additionalyChange;
-      } else {
-        xChange += otherAdditionalxChange;
-        yChange += otherAdditionalyChange;
-      }
-    }
-
-  return xChange + yChange;
-
-
-}
 
 module.exports = weightedSearchAlgorithm;
 
