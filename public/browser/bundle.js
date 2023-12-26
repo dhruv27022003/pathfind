@@ -1,16 +1,17 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({
+  
+  1:[function(require,module,exports){
 const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearchAlgorithm");
 const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
 
 function launchAnimations(board, success, type, object, algorithm, heuristic) {
   let nodes = object ? board.objectNodesToAnimate.slice(0) : board.nodesToAnimate.slice(0);
-  let speed = board.speed === "fast" ?
-    0 : board.speed === "average" ?
-      100 : 500;
+  let speed = 0;
   let shortestNodes;
-  console.log("launchAnimations");
+  console.log("launchAnimations....,");
   function timeout(index) {
     setTimeout(function () {
+      console.log("launchAnimations....,timeout",index);
       if (index === nodes.length) {
         if (object) {
           board.objectNodesToAnimate = [];
@@ -110,64 +111,6 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
     }
   }
 
-  function shortestPathTimeout(index) {
-    setTimeout(function () {
-      if (index === shortestNodes.length){
-        board.reset();
-        if (object) {
-          shortestPathChange(board.nodes[board.target], shortestNodes[index - 1]);
-          board.objectShortestPathNodesToAnimate = [];
-          board.shortestPathNodesToAnimate = [];
-          board.clearNodeStatuses();
-          let newSuccess;
-          if (type === "weighted") {
-            newSuccess = weightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-          } else {
-            newSuccess = unweightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-          }
-          launchAnimations(board, newSuccess, type);
-          return;
-        } else {
-          shortestPathChange(board.nodes[board.target], shortestNodes[index - 1]);
-          board.objectShortestPathNodesToAnimate = [];
-          board.shortestPathNodesToAnimate = [];
-          return;
-        }
-      } else if (index === 0) {
-        shortestPathChange(shortestNodes[index])
-      } else {
-        shortestPathChange(shortestNodes[index], shortestNodes[index - 1]);
-      }
-      shortestPathTimeout(index + 1);
-    }, 40);
-  }
-
-  function shortestPathChange(currentNode, previousNode) {
-    let currentHTMLNode = document.getElementById(currentNode.id);
-    if (type === "unweighted") {
-      currentHTMLNode.className = "shortest-path-unweighted";
-    } else {
-      if (currentNode.direction === "up") {
-        currentHTMLNode.className = "shortest-path-up";
-      } else if (currentNode.direction === "down") {
-        currentHTMLNode.className = "shortest-path-down";
-      } else if (currentNode.direction === "right") {
-        currentHTMLNode.className = "shortest-path-right";
-      } else if (currentNode.direction === "left") {
-        currentHTMLNode.className = "shortest-path-left";
-      } else if (currentNode.direction = "down-right") {
-        currentHTMLNode.className = "wall"
-      }
-    }
-    if (previousNode) {
-      let previousHTMLNode = document.getElementById(previousNode.id);
-      previousHTMLNode.className = "shortest-path";
-    } else {
-      let element = document.getElementById(board.start);
-      element.className = "shortest-path";
-      element.removeAttribute("style");
-    }
-  }
 
   timeout(0);
 
@@ -175,146 +118,12 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
 
 module.exports = launchAnimations;
 
-},{"../pathfindingAlgorithms/unweightedSearchAlgorithm":15,"../pathfindingAlgorithms/weightedSearchAlgorithm":16}],2:[function(require,module,exports){
-// const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearchAlgorithm");
-// const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
+},{"../pathfindingAlgorithms/unweightedSearchAlgorithm":15,"../pathfindingAlgorithms/weightedSearchAlgorithm":16}],
+2:[function(require,module,exports){
 
-function launchInstantAnimations(board, success, type, object, algorithm, heuristic) {
-  let nodes = object ? board.objectNodesToAnimate.slice(0) : board.nodesToAnimate.slice(0);
-  let shortestNodes;
-  for (let i = 0; i < nodes.length; i++) {
-    if (i === 0) {
-      change(nodes[i]);
-    } else {
-      change(nodes[i], nodes[i - 1]);
-    }
-  }
-  if (object) {
-    board.objectNodesToAnimate = [];
-    if (success) {
-      board.drawShortestPath(board.object, board.start, "object");
-      board.clearNodeStatuses();
-      let newSuccess;
-      if (type === "weighted") {
-        newSuccess = weightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm, heuristic);
-      } else {
-        newSuccess = unweightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-      }
-      launchInstantAnimations(board, newSuccess, type);
-      shortestNodes = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
-    } else {
-      console.log("Failure.");
-      board.reset();
-      return;
-    }
-  } else {
-    board.nodesToAnimate = [];
-    if (success) {
-      if (board.isObject) {
-        board.drawShortestPath(board.target, board.object);
-      } else {
-        board.drawShortestPath(board.target, board.start);
-      }
-      shortestNodes = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
-    } else {
-      console.log("Failure");
-      board.reset();
-      return;
-    }
-  }
-
-  let j;
-  for (j = 0; j < shortestNodes.length; j++) {
-    if (j === 0) {
-      shortestPathChange(shortestNodes[j]);
-    } else {
-      shortestPathChange(shortestNodes[j], shortestNodes[j - 1]);
-    }
-  }
-  board.reset();
-  if (object) {
-    shortestPathChange(board.nodes[board.target], shortestNodes[j - 1]);
-    board.objectShortestPathNodesToAnimate = [];
-    board.shortestPathNodesToAnimate = [];
-    board.clearNodeStatuses();
-    let newSuccess;
-    if (type === "weighted") {
-      newSuccess = weightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-    } else {
-      newSuccess = unweightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-    }
-    launchInstantAnimations(board, newSuccess, type);
-  } else {
-    shortestPathChange(board.nodes[board.target], shortestNodes[j - 1]);
-    board.objectShortestPathNodesToAnimate = [];
-    board.shortestPathNodesToAnimate = [];
-  }
-
-  function change(currentNode, previousNode) {
-    let currentHTMLNode = document.getElementById(currentNode.id);
-    let relevantClassNames = ["start", "shortest-path", "instantshortest-path", "instantshortest-path weight"];
-    if (previousNode) {
-      let previousHTMLNode = document.getElementById(previousNode.id);
-      if (!relevantClassNames.includes(previousHTMLNode.className)) {
-        if (object) {
-          previousHTMLNode.className = previousNode.weight === 15 ? "instantvisitedobject weight" : "instantvisitedobject";
-        } else {
-          previousHTMLNode.className = previousNode.weight === 15 ? "instantvisited weight" : "instantvisited";
-        }
-      }
-    }
-  }
-
-  function shortestPathChange(currentNode, previousNode) {
-    let currentHTMLNode = document.getElementById(currentNode.id);
-    if (type === "unweighted") {
-      currentHTMLNode.className = "shortest-path-unweighted";
-    } else {
-      if (currentNode.direction === "up") {
-        currentHTMLNode.className = "shortest-path-up";
-      } else if (currentNode.direction === "down") {
-        currentHTMLNode.className = "shortest-path-down";
-      } else if (currentNode.direction === "right") {
-        currentHTMLNode.className = "shortest-path-right";
-      } else if (currentNode.direction === "left") {
-        currentHTMLNode.className = "shortest-path-left";
-      }
-    }
-    if (previousNode) {
-      let previousHTMLNode = document.getElementById(previousNode.id);
-      previousHTMLNode.className = previousNode.weight === 15 ? "instantshortest-path weight" : "instantshortest-path";
-    } else {
-      let element = document.getElementById(board.start);
-      element.className = "startTransparent";
-    }
-  }
-
-};
-
-module.exports = launchInstantAnimations;
 
 },{"../pathfindingAlgorithms/unweightedSearchAlgorithm":15,"../pathfindingAlgorithms/weightedSearchAlgorithm":16}],3:[function(require,module,exports){
-function mazeGenerationAnimations(board) {
-  let nodes = board.wallsToAnimate.slice(0);
-  let speed = board.speed === "fast" ?
-    5 : board.speed === "average" ?
-      25 : 75;
-  function timeout(index) {
-    setTimeout(function () {
-        if (index === nodes.length){
-          board.wallsToAnimate = [];
-          board.toggleButtons();
-          return;
-        }
-        nodes[index].className = board.nodes[nodes[index].id].weight === 15 ? "unvisited weight" : "wall";
-        timeout(index + 1);
-    }, speed);
-  }
 
-  timeout(0);
-};
-
-module.exports = mazeGenerationAnimations;
 
 },{}],4:[function(require,module,exports){
 const Node = require("./node");
@@ -727,26 +536,6 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
 
 };
 
-// Board.prototype.createMazeOne = function(type) {
-//   Object.keys(this.nodes).forEach(node => {
-//     let random = Math.random();
-//     let currentHTMLNode = document.getElementById(node);
-//     let relevantClassNames = ["start", "target", "object"]
-//     let randomTwo = type === "wall" ? 0.25 : 0.35;
-//     if (random < randomTwo && !relevantClassNames.includes(currentHTMLNode.className)) {
-//       if (type === "wall") {
-//         currentHTMLNode.className = "wall";
-//         this.nodes[node].status = "wall";
-//         this.nodes[node].weight = 0;
-//       } else if (type === "weight") {
-//         currentHTMLNode.className = "unvisited weight";
-//         this.nodes[node].status = "unvisited";
-//         this.nodes[node].weight = 15;
-//       }
-//     }
-//   });
-// };
-
 Board.prototype.clearPath = function(clickedButton) {
   if (clickedButton) {
     let start = this.nodes[this.start];
@@ -761,7 +550,7 @@ Board.prototype.clearPath = function(clickedButton) {
       document.getElementById(object.id).className = "object";
     }
   }
-  console.log("clearpath called");
+  console.log("clearpath called....");
   document.getElementById("startButtonStart").onclick = () => {
     if (!this.currentAlgorithm) {
       document.getElementById("startButtonStart").innerHTML = '<button class="btn btn-default navbar-btn" type="button">Pick an Algorithm!</button>'
@@ -865,7 +654,7 @@ Board.prototype.clearNodeStatuses = function() {
 
 Board.prototype.redoAlgorithm = function() {
   this.clearPath();
-  this.instantAlgorithm();
+  // this.instantAlgorithm();
 };
 
 Board.prototype.reset = function(objectNotTransparent) {
@@ -968,7 +757,7 @@ Board.prototype.toggleButtons = function() {
             console.log("goin..1o..")
             success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
             console.log(success)
-            console.log("goin..1o..")
+            console.log("goin..1o..", this)
             launchAnimations(this, success, "weighted");
           } else {
             console.log("goin...11 ")
@@ -1165,7 +954,8 @@ window.onkeyup = (e) => {
 
 },{"./animations/launchAnimations":
 1,"./animations/launchInstantAnimations":
-2,"./animations/mazeGenerationAnimations":3,"./getDistance":5,"./mazeAlgorithms/otherMaze":6,"./mazeAlgorithms/otherOtherMaze":7,"./mazeAlgorithms/recursiveDivisionMaze":8,"./mazeAlgorithms/simpleDemonstration":9,"./mazeAlgorithms/stairDemonstration":10,"./mazeAlgorithms/weightsDemonstration":11,"./node":12,"./pathfindingAlgorithms/astar":13,"./pathfindingAlgorithms/bidirectional":14,"./pathfindingAlgorithms/unweightedSearchAlgorithm":15,"./pathfindingAlgorithms/weightedSearchAlgorithm":16}],
+2,"./animations/mazeGenerationAnimations":
+3,"./getDistance":5,"./mazeAlgorithms/otherMaze":6,"./mazeAlgorithms/otherOtherMaze":7,"./mazeAlgorithms/recursiveDivisionMaze":8,"./mazeAlgorithms/simpleDemonstration":9,"./mazeAlgorithms/stairDemonstration":10,"./mazeAlgorithms/weightsDemonstration":11,"./node":12,"./pathfindingAlgorithms/astar":13,"./pathfindingAlgorithms/bidirectional":14,"./pathfindingAlgorithms/unweightedSearchAlgorithm":15,"./pathfindingAlgorithms/weightedSearchAlgorithm":16}],
 5:[function(require,module,exports){
 // function getDistance(nodeOne, nodeTwo) {
 //   console.log("getdistance called")
@@ -1232,28 +1022,6 @@ window.onkeyup = (e) => {
 8:[function(require,module,exports){
 },{}],
 9:[function(require,module,exports){
-// function simpleDemonstration(board) {
-//   let currentIdY = board.width - 10;
-//   for (let counter = 0; counter < 7; counter++) {
-//     let currentIdXOne = Math.floor(board.height / 2) - counter;
-//     let currentIdXTwo = Math.floor(board.height / 2) + counter;
-//     let currentIdOne = `${currentIdXOne}-${currentIdY}`;
-//     let currentIdTwo = `${currentIdXTwo}-${currentIdY}`;
-//     let currentElementOne = document.getElementById(currentIdOne);
-//     let currentElementTwo = document.getElementById(currentIdTwo);
-//     board.wallsToAnimate.push(currentElementOne);
-//     board.wallsToAnimate.push(currentElementTwo);
-//     let currentNodeOne = board.nodes[currentIdOne];
-//     let currentNodeTwo = board.nodes[currentIdTwo];
-//     currentNodeOne.status = "wall";
-//     currentNodeOne.weight = 0;
-//     currentNodeTwo.status = "wall";
-//     currentNodeTwo.weight = 0;
-//   }
-// }
-
-// module.exports = simpleDemonstration;
-
 },{}],10:[function(require,module,exports){
 
 },{}],11:[function(require,module,exports){
