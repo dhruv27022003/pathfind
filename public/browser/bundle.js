@@ -8,10 +8,9 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
   let nodes = object ? board.objectNodesToAnimate.slice(0) : board.nodesToAnimate.slice(0);
   let speed = 0;
   let shortestNodes;
-  console.log("launchAnimations....,");
+  console.log("launch animation called....");
   function timeout(index) {
     setTimeout(function () {
-      console.log("launchAnimations....,timeout",index);
       if (index === nodes.length) {
         if (object) {
           board.objectNodesToAnimate = [];
@@ -64,7 +63,8 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
             return;
           }
         }
-      } else if (index === 0) {
+      }
+       else if (index === 0) {
         if (object) {
           document.getElementById(board.start).className = "visitedStartNodePurple";
         } else {
@@ -72,12 +72,8 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
             document.getElementById(board.start).className = "visitedStartNodeBlue";
           }
         }
-        if (board.currentAlgorithm === "bidirectional") {
-          document.getElementById(board.target).className = "visitedTargetNodeBlue";
-        }
+
         change(nodes[index])
-      } else if (index === nodes.length - 1 && board.currentAlgorithm === "bidirectional") {
-        change(nodes[index], nodes[index - 1], "bidirectional");
       } else {
         change(nodes[index], nodes[index - 1]);
       }
@@ -85,9 +81,13 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
     }, speed);
   }
 
+  
   function change(currentNode, previousNode, bidirectional) {
     let currentHTMLNode = document.getElementById(currentNode.id);
     let relevantClassNames = ["start", "target", "object", "visitedStartNodeBlue", "visitedStartNodePurple", "visitedObjectNode", "visitedTargetNodePurple", "visitedTargetNodeBlue"];
+    
+    // console.log("change called....",currentNode, "  ",previousNode," ",currentHTMLNode);
+    
     if (!relevantClassNames.includes(currentHTMLNode.className)) {
       currentHTMLNode.className = !bidirectional ?
         "current" : currentNode.weight === 15 ?
@@ -111,7 +111,7 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
     }
   }
 
-
+  // console.log(document)
   timeout(0);
 
 };
@@ -174,6 +174,7 @@ Board.prototype.initialise = function() {
   this.createGrid();
   this.addEventListeners();
   this.toggleButtons();
+  this.currentAlgorithm = "dijkstra";
   // this.toggleTutorialButtons();
 };
 
@@ -334,64 +335,11 @@ if (!this.keyDown) {
   }
 };
 
-Board.prototype.drawShortestPath = function(targetNodeId, startNodeId, object) {
-  let currentNode;
-  if (this.currentAlgorithm !== "bidirectional") {
-    currentNode = this.nodes[this.nodes[targetNodeId].previousNode];
-    if (object) {
-      while (currentNode.id !== startNodeId) {
-        this.objectShortestPathNodesToAnimate.unshift(currentNode);
-        currentNode = this.nodes[currentNode.previousNode];
-      }
-    } else {
-      while (currentNode.id !== startNodeId) {
-        this.shortestPathNodesToAnimate.unshift(currentNode);
-        document.getElementById(currentNode.id).className = `shortest-path`;
-        currentNode = this.nodes[currentNode.previousNode];
-      }
-    }
-  } else {
-    if (this.middleNode !== this.target && this.middleNode !== this.start) {
-      currentNode = this.nodes[this.nodes[this.middleNode].previousNode];
-      secondCurrentNode = this.nodes[this.nodes[this.middleNode].otherpreviousNode];
-      if (secondCurrentNode.id === this.target) {
-        this.nodes[this.target].direction = getDistance(this.nodes[this.middleNode], this.nodes[this.target])[2];
-      }
-      if (this.nodes[this.middleNode].weight === 0) {
-        document.getElementById(this.middleNode).className = `shortest-path`;
-      } else {
-        document.getElementById(this.middleNode).className = `shortest-path weight`;
-      }
-      while (currentNode.id !== startNodeId) {
-        this.shortestPathNodesToAnimate.unshift(currentNode);
-        document.getElementById(currentNode.id).className = `shortest-path`;
-        currentNode = this.nodes[currentNode.previousNode];
-      }
-      while (secondCurrentNode.id !== targetNodeId) {
-        this.shortestPathNodesToAnimate.unshift(secondCurrentNode);
-        document.getElementById(secondCurrentNode.id).className = `shortest-path`;
-        if (secondCurrentNode.otherpreviousNode === targetNodeId) {
-          if (secondCurrentNode.otherdirection === "left") {
-            secondCurrentNode.direction = "right";
-          } else if (secondCurrentNode.otherdirection === "right") {
-            secondCurrentNode.direction = "left";
-          } else if (secondCurrentNode.otherdirection === "up") {
-            secondCurrentNode.direction = "down";
-          } else if (secondCurrentNode.otherdirection === "down") {
-            secondCurrentNode.direction = "up";
-          }
-          this.nodes[this.target].direction = getDistance(secondCurrentNode, this.nodes[this.target])[2];
-        }
-        secondCurrentNode = this.nodes[secondCurrentNode.otherpreviousNode]
-      }
-    } else {
-      document.getElementById(this.nodes[this.target].previousNode).className = `shortest-path`;
-    }
-  }
-};
+
 
 Board.prototype.addShortestPath = function(targetNodeId, startNodeId, object) {
   let currentNode = this.nodes[this.nodes[targetNodeId].previousNode];
+  console.log("add shortest path called....",currentNode);
   if (object) {
     while (currentNode.id !== startNodeId) {
       this.objectShortestPathNodesToAnimate.unshift(currentNode);
@@ -411,7 +359,7 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
   let currentNode;
   let secondCurrentNode;
   let currentNodesToAnimate;
-
+  console.log("draw shortest path timeout called....");
   if (board.currentAlgorithm !== "bidirectional") {
     currentNode = board.nodes[board.nodes[targetNodeId].previousNode];
     if (object) {
@@ -489,6 +437,7 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
 
 
   function shortestPathChange(currentNode, previousNode, isActualTarget) {
+    console.log("shortest path change called....");
     if (currentNode === "object") {
       let element = document.getElementById(board.object);
       element.className = "objectTransparent";
@@ -570,7 +519,8 @@ Board.prototype.clearPath = function(clickedButton) {
           launchAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
         }
         this.algoDone = true;
-      } else if (unweightedAlgorithms.includes(this.currentAlgorithm)) {
+      } 
+      else if (unweightedAlgorithms.includes(this.currentAlgorithm)) {
         if (!this.numberOfObjects) {
           success = unweightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm);
           launchAnimations(this, success, "unweighted");
@@ -654,7 +604,6 @@ Board.prototype.clearNodeStatuses = function() {
 
 Board.prototype.redoAlgorithm = function() {
   this.clearPath();
-  // this.instantAlgorithm();
 };
 
 Board.prototype.reset = function(objectNotTransparent) {
@@ -678,74 +627,24 @@ Board.prototype.resetHTMLNodes = function() {
   target.className = "target";
 };
 
-Board.prototype.changeStartNodeImages = function() {
-  let unweighted = ["bfs", "dfs"];
-  let strikethrough = ["bfs", "dfs"];
-  let guaranteed = ["dijkstra", "astar"];
-  let name = "";
-  if (this.currentAlgorithm === "bfs") {
-    name = "Breath-first Search";
-  } else if (this.currentAlgorithm === "dfs") {
-    name = "Depth-first Search";
-  } else if (this.currentAlgorithm === "dijkstra") {
-    name = "Dijkstra's Algorithm";
-  } else if (this.currentAlgorithm === "astar") {
-    name = "A* Search";
-  } else if (this.currentAlgorithm === "greedy") {
-    name = "Greedy Best-first Search";
-  } else if (this.currentAlgorithm === "CLA" && this.currentHeuristic !== "extraPoweredManhattanDistance") {
-    name = "Swarm Algorithm";
-  } else if (this.currentAlgorithm === "CLA" && this.currentHeuristic === "extraPoweredManhattanDistance") {
-    name = "Convergent Swarm Algorithm";
-  } else if (this.currentAlgorithm === "bidirectional") {
-    name = "Bidirectional Swarm Algorithm";
-  }
-  if (unweighted.includes(this.currentAlgorithm)) {
 
-    document.getElementById("weightLegend").className = "strikethrough";
-    for (let i = 0; i < 14; i++) {
-      let j = i.toString();
-      let backgroundImage = document.styleSheets["1"].rules[j].style.backgroundImage;
-      document.styleSheets["1"].rules[j].style.backgroundImage = backgroundImage.replace("triangle", "spaceship");
-    }
-  } else {
-
-    document.getElementById("weightLegend").className = "";
-    for (let i = 0; i < 14; i++) {
-      let j = i.toString();
-      let backgroundImage = document.styleSheets["1"].rules[j].style.backgroundImage;
-      document.styleSheets["1"].rules[j].style.backgroundImage = backgroundImage.replace("spaceship", "triangle");
-    }
-  }
-  if (this.currentAlgorithm === "bidirectional") {
-
-    document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>does not guarantee</b></i> the shortest path!`;
-    document.getElementById("bombLegend").className = "strikethrough";
-    document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav disabledA";
-  } else {
-    document.getElementById("bombLegend").className = "";
-    document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
-  }
-  if (guaranteed.includes(this.currentAlgorithm)) {
-    document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>guarantees</b></i> the shortest path!`;
-  }
-};
 
 
 Board.prototype.toggleButtons = function() {
   document.getElementById("refreshButton").onclick = () => {
     window.location.reload(true);
   }
-  console.log("toggleButtons initial call");
   this.speed = "fast";
   if (!this.buttonsOn) {
     this.buttonsOn = true;
 
     document.getElementById("startButtonStart").onclick = () => {
-      console.log("toggleButtons called");
+
       if (!this.currentAlgorithm) {
         document.getElementById("startButtonStart").innerHTML = '<button class="btn btn-default navbar-btn" type="button">Pick an Algorithm!</button>'
-      } else {
+      } 
+      
+      else {
         this.clearPath("clickedButton");
         this.toggleButtons();
         let weightedAlgorithms = ["dijkstra", "CLA", "CLA", "greedy"];
@@ -754,13 +653,9 @@ Board.prototype.toggleButtons = function() {
         console.log(this.currentAlgorithm," yooooo   ",!this.numberOfObjects);
         if (weightedAlgorithms.includes(this.currentAlgorithm)) {
           if (!this.numberOfObjects) {
-            console.log("goin..1o..")
             success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-            console.log(success)
-            console.log("goin..1o..", this)
             launchAnimations(this, success, "weighted");
           } else {
-            console.log("goin...11 ")
             this.isObject = true;
             success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
             launchAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
@@ -957,60 +852,6 @@ window.onkeyup = (e) => {
 2,"./animations/mazeGenerationAnimations":
 3,"./getDistance":5,"./mazeAlgorithms/otherMaze":6,"./mazeAlgorithms/otherOtherMaze":7,"./mazeAlgorithms/recursiveDivisionMaze":8,"./mazeAlgorithms/simpleDemonstration":9,"./mazeAlgorithms/stairDemonstration":10,"./mazeAlgorithms/weightsDemonstration":11,"./node":12,"./pathfindingAlgorithms/astar":13,"./pathfindingAlgorithms/bidirectional":14,"./pathfindingAlgorithms/unweightedSearchAlgorithm":15,"./pathfindingAlgorithms/weightedSearchAlgorithm":16}],
 5:[function(require,module,exports){
-// function getDistance(nodeOne, nodeTwo) {
-//   console.log("getdistance called")
-//   let currentCoordinates = nodeOne.id.split("-");
-//   let targetCoordinates = nodeTwo.id.split("-");
-//   let x1 = parseInt(currentCoordinates[0]);
-//   let y1 = parseInt(currentCoordinates[1]);
-//   let x2 = parseInt(targetCoordinates[0]);
-//   let y2 = parseInt(targetCoordinates[1]);
-//   if (x2 < x1) {
-//     if (nodeOne.direction === "up") {
-//       return [1, ["f"], "up"];
-//     } else if (nodeOne.direction === "right") {
-//       return [2, ["l", "f"], "up"];
-//     } else if (nodeOne.direction === "left") {
-//       return [2, ["r", "f"], "up"];
-//     } else if (nodeOne.direction === "down") {
-//       return [3, ["r", "r", "f"], "up"];
-//     }
-//   } else if (x2 > x1) {
-//     if (nodeOne.direction === "up") {
-//       return [3, ["r", "r", "f"], "down"];
-//     } else if (nodeOne.direction === "right") {
-//       return [2, ["r", "f"], "down"];
-//     } else if (nodeOne.direction === "left") {
-//       return [2, ["l", "f"], "down"];
-//     } else if (nodeOne.direction === "down") {
-//       return [1, ["f"], "down"];
-//     }
-//   }
-//   if (y2 < y1) {
-//     if (nodeOne.direction === "up") {
-//       return [2, ["l", "f"], "left"];
-//     } else if (nodeOne.direction === "right") {
-//       return [3, ["l", "l", "f"], "left"];
-//     } else if (nodeOne.direction === "left") {
-//       return [1, ["f"], "left"];
-//     } else if (nodeOne.direction === "down") {
-//       return [2, ["r", "f"], "left"];
-//     }
-//   } else if (y2 > y1) {
-//     if (nodeOne.direction === "up") {
-//       return [2, ["r", "f"], "right"];
-//     } else if (nodeOne.direction === "right") {
-//       return [1, ["f"], "right"];
-//     } else if (nodeOne.direction === "left") {
-//       return [3, ["r", "r", "f"], "right"];
-//     } else if (nodeOne.direction === "down") {
-//       return [2, ["l", "f"], "right"];
-//     }
-//   }
-// }
-
-// module.exports = getDistance;
-
 },{}],
 
 6:[function(require,module,exports){
@@ -1576,88 +1417,10 @@ module.exports = bidirectional;
 },{"./astar":13}],
 
 15:[function(require,module,exports){
-function unweightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArray, name) {
-  if (!start || !target || start === target) {
-    return false;
-  }
-  console.log("running");
-  let structure = [nodes[start]];
-  let exploredNodes = {start: true};
-  while (structure.length) {
-    let currentNode = name === "bfs" ? structure.shift() : structure.pop();
-    nodesToAnimate.push(currentNode);
-    if (name === "dfs") exploredNodes[currentNode.id] = true;
-    currentNode.status = "visited";
-    if (currentNode.id === target) {
-      return "success";
-    }
-    let currentNeighbors = getNeighbors(currentNode.id, nodes, boardArray, name);
-    currentNeighbors.forEach(neighbor => {
-      if (!exploredNodes[neighbor]) {
-        if (name === "bfs") exploredNodes[neighbor] = true;
-        nodes[neighbor].previousNode = currentNode.id;
-        structure.push(nodes[neighbor]);
-      }
-    });
-  }
-  return false;
-}
-
-function getNeighbors(id, nodes, boardArray, name) {
-  let coordinates = id.split("-");
-  let x = parseInt(coordinates[0]);
-  let y = parseInt(coordinates[1]);
-  let neighbors = [];
-  let potentialNeighbor;
-  if (boardArray[x - 1] && boardArray[x - 1][y]) {
-    potentialNeighbor = `${(x - 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") {
-      if (name === "bfs") {
-        neighbors.push(potentialNeighbor);
-      } else {
-        neighbors.unshift(potentialNeighbor);
-      }
-    }
-  }
-  if (boardArray[x][y + 1]) {
-    potentialNeighbor = `${x.toString()}-${(y + 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") {
-      if (name === "bfs") {
-        neighbors.push(potentialNeighbor);
-      } else {
-        neighbors.unshift(potentialNeighbor);
-      }
-    }
-  }
-  if (boardArray[x + 1] && boardArray[x + 1][y]) {
-    potentialNeighbor = `${(x + 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") {
-      if (name === "bfs") {
-        neighbors.push(potentialNeighbor);
-      } else {
-        neighbors.unshift(potentialNeighbor);
-      }
-    }
-  }
-  if (boardArray[x][y - 1]) {
-    potentialNeighbor = `${x.toString()}-${(y - 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") {
-      if (name === "bfs") {
-        neighbors.push(potentialNeighbor);
-      } else {
-        neighbors.unshift(potentialNeighbor);
-      }
-    }
-  }
-  return neighbors;
-}
-
-module.exports = unweightedSearchAlgorithm;
 
 },{}],
 
 16:[function(require,module,exports){
-const astar = require("./astar");
 
 function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArray, name, heuristic) {
   if (!start || !target || start === target) {
@@ -1665,7 +1428,7 @@ function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArra
   }
   nodes[start].distance = 0;
   nodes[start].direction = "right";
-  console.log(nodes)
+
   let unvisitedNodes = Object.keys(nodes);
   while (unvisitedNodes.length) {
     let currentNode = closestNode(nodes, unvisitedNodes);
@@ -1709,14 +1472,7 @@ function updateNeighbors(nodes, node, boardArray, target, name, start, heuristic
   }
 }
 
-function averageNumberOfNodesBetween(currentNode) {
-  let num = 0;
-  while (currentNode.previousNode) {
-    num++;
-    currentNode = currentNode.previousNode;
-  }
-  return num;
-}
+
 
 
 function updateNode(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
