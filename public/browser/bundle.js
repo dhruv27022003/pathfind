@@ -5,28 +5,19 @@ const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearch
 const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
 
 function launchAnimations(board, success, type, object, algorithm, heuristic) {
-  let nodes = object ? board.objectNodesToAnimate.slice(0) : board.nodesToAnimate.slice(0);
-  let speed = 0;
-  let shortestNodes;
+
   console.log("launch animation called....");
-  function timeout(index) {
-    setTimeout(function () {
-      if (index === nodes.length) {
+  console.log("obj ",object," type ",type)
         if (object) {
+          console.log("object is true");
           board.objectNodesToAnimate = [];
           if (success) {
             board.addShortestPath(board.object, board.start, "object");
             board.clearNodeStatuses();
             let newSuccess;
-            if (board.currentAlgorithm === "bidirectional") {
-
-            } else {
-              if (type === "weighted") {
+            if (type === "weighted") {
                 newSuccess = weightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm, heuristic);
-              } else {
-                newSuccess = unweightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-              }
-            }
+              } 
             document.getElementById(board.object).className = "visitedObjectNode";
             launchAnimations(board, newSuccess, type);
             return;
@@ -36,13 +27,12 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
             board.toggleButtons();
             return;
           }
-        } else {
+        } 
+        else {
           board.nodesToAnimate = [];
           if (success) {
-            if (document.getElementById(board.target).className !== "visitedTargetNodeBlue") {
-              document.getElementById(board.target).className = "visitedTargetNodeBlue";
-            }
             if (board.isObject) {
+              console.log("object is true.....");
               board.addShortestPath(board.target, board.object);
               board.drawShortestPathTimeout(board.target, board.object, type, "object");
               board.objectShortestPathNodesToAnimate = [];
@@ -63,56 +53,6 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
             return;
           }
         }
-      }
-       else if (index === 0) {
-        if (object) {
-          document.getElementById(board.start).className = "visitedStartNodePurple";
-        } else {
-          if (document.getElementById(board.start).className !== "visitedStartNodePurple") {
-            document.getElementById(board.start).className = "visitedStartNodeBlue";
-          }
-        }
-
-        change(nodes[index])
-      } else {
-        change(nodes[index], nodes[index - 1]);
-      }
-      timeout(index + 1);
-    }, speed);
-  }
-
-  
-  function change(currentNode, previousNode, bidirectional) {
-    let currentHTMLNode = document.getElementById(currentNode.id);
-    let relevantClassNames = ["start", "target", "object", "visitedStartNodeBlue", "visitedStartNodePurple", "visitedObjectNode", "visitedTargetNodePurple", "visitedTargetNodeBlue"];
-    
-    // console.log("change called....",currentNode, "  ",previousNode," ",currentHTMLNode);
-    
-    if (!relevantClassNames.includes(currentHTMLNode.className)) {
-      currentHTMLNode.className = !bidirectional ?
-        "current" : currentNode.weight === 15 ?
-          "visited weight" : "visited";
-    }
-    if (currentHTMLNode.className === "visitedStartNodePurple" && !object) {
-      currentHTMLNode.className = "visitedStartNodeBlue";
-    }
-    if (currentHTMLNode.className === "target" && object) {
-      currentHTMLNode.className = "visitedTargetNodePurple";
-    }
-    if (previousNode) {
-      let previousHTMLNode = document.getElementById(previousNode.id);
-      if (!relevantClassNames.includes(previousHTMLNode.className)) {
-        if (object) {
-          previousHTMLNode.className = previousNode.weight === 15 ? "visitedobject weight" : "visitedobject";
-        } else {
-          previousHTMLNode.className = previousNode.weight === 15 ? "visited weight" : "visited";
-        }
-      }
-    }
-  }
-
-  // console.log(document)
-  timeout(0);
 
 };
 
@@ -128,18 +68,8 @@ module.exports = launchAnimations;
 },{}],4:[function(require,module,exports){
 const Node = require("./node");
 const launchAnimations = require("./animations/launchAnimations");
-const launchInstantAnimations = require("./animations/launchInstantAnimations");
-const mazeGenerationAnimations = require("./animations/mazeGenerationAnimations");
 const weightedSearchAlgorithm = require("./pathfindingAlgorithms/weightedSearchAlgorithm");
 const unweightedSearchAlgorithm = require("./pathfindingAlgorithms/unweightedSearchAlgorithm");
-const recursiveDivisionMaze = require("./mazeAlgorithms/recursiveDivisionMaze");
-const otherMaze = require("./mazeAlgorithms/otherMaze");
-const otherOtherMaze = require("./mazeAlgorithms/otherOtherMaze");
-const astar = require("./pathfindingAlgorithms/astar");
-const stairDemonstration = require("./mazeAlgorithms/stairDemonstration");
-const weightsDemonstration = require("./mazeAlgorithms/weightsDemonstration");
-const simpleDemonstration = require("./mazeAlgorithms/simpleDemonstration");
-const bidirectional = require("./pathfindingAlgorithms/bidirectional");
 const getDistance = require("./getDistance");
 
 function Board(height, width) {
@@ -247,17 +177,17 @@ Board.prototype.addEventListeners = function() {
             if (board.pressedNodeStatus === "target") {
               board.target = currentId;
               if (board.algoDone) {
-                board.redoAlgorithm();
+                // board.redoAlgorithm();
               }
             } else if (board.pressedNodeStatus === "start") {
               board.start = currentId;
               if (board.algoDone) {
-                board.redoAlgorithm();
+                // board.redoAlgorithm();
               }
             } else if (board.pressedNodeStatus === "object") {
               board.object = currentId;
               if (board.algoDone) {
-                board.redoAlgorithm();
+                // board.redoAlgorithm();
               }
             }
           } else if (board.mouseDown) {
@@ -314,25 +244,17 @@ Board.prototype.changeSpecialNode = function(currentNode) {
 
 Board.prototype.changeNormalNode = function(currentNode) {
   let element = document.getElementById(currentNode.id);
+  // console.log("change normal node called....");
   let relevantStatuses = ["start", "target", "object"];
-  let unweightedAlgorithms = ["dfs", "bfs"]
-if (!this.keyDown) {
-    if (!relevantStatuses.includes(currentNode.status)) {
+
+  if (!relevantStatuses.includes(currentNode.status)) {
       element.className = currentNode.status !== "wall" ?
         "wall" : "unvisited";
       currentNode.status = element.className !== "wall" ?
         "unvisited" : "wall";
       currentNode.weight = 0;
     }
-  } else if (this.keyDown === 87 && !unweightedAlgorithms.includes(this.currentAlgorithm)) {
-    if (!relevantStatuses.includes(currentNode.status)) {
-      element.className = currentNode.weight !== 15 ?
-        "unvisited weight" : "unvisited";
-      currentNode.weight = element.className !== "unvisited weight" ?
-        0 : 15;
-      currentNode.status = "unvisited";
-    }
-  }
+  
 };
 
 
@@ -357,12 +279,11 @@ Board.prototype.addShortestPath = function(targetNodeId, startNodeId, object) {
 Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, type, object) {
   let board = this;
   let currentNode;
-  let secondCurrentNode;
   let currentNodesToAnimate;
-  console.log("draw shortest path timeout called....");
-  if (board.currentAlgorithm !== "bidirectional") {
+  // console.log("draw shortest path timeout called....",object);
+
     currentNode = board.nodes[board.nodes[targetNodeId].previousNode];
-    if (object) {
+  if (object) {
       board.objectShortestPathNodesToAnimate.push("object");
       currentNodesToAnimate = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
     } else {
@@ -372,47 +293,7 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
         currentNode = board.nodes[currentNode.previousNode];
       }
     }
-  } else {
-    if (board.middleNode !== board.target && board.middleNode !== board.start) {
-      currentNode = board.nodes[board.nodes[board.middleNode].previousNode];
-      secondCurrentNode = board.nodes[board.nodes[board.middleNode].otherpreviousNode];
-      if (secondCurrentNode.id === board.target) {
-        board.nodes[board.target].direction = getDistance(board.nodes[board.middleNode], board.nodes[board.target])[2];
-      }
-      if (object) {
 
-      } else {
-        currentNodesToAnimate = [];
-        board.nodes[board.middleNode].direction = getDistance(currentNode, board.nodes[board.middleNode])[2];
-        while (currentNode.id !== startNodeId) {
-          currentNodesToAnimate.unshift(currentNode);
-          currentNode = board.nodes[currentNode.previousNode];
-        }
-        currentNodesToAnimate.push(board.nodes[board.middleNode]);
-        while (secondCurrentNode.id !== targetNodeId) {
-          if (secondCurrentNode.otherdirection === "left") {
-            secondCurrentNode.direction = "right";
-          } else if (secondCurrentNode.otherdirection === "right") {
-            secondCurrentNode.direction = "left";
-          } else if (secondCurrentNode.otherdirection === "up") {
-            secondCurrentNode.direction = "down";
-          } else if (secondCurrentNode.otherdirection === "down") {
-            secondCurrentNode.direction = "up";
-          }
-          currentNodesToAnimate.push(secondCurrentNode);
-          if (secondCurrentNode.otherpreviousNode === targetNodeId) {
-            board.nodes[board.target].direction = getDistance(secondCurrentNode, board.nodes[board.target])[2];
-          }
-          secondCurrentNode = board.nodes[secondCurrentNode.otherpreviousNode]
-        }
-    }
-  } else {
-    currentNodesToAnimate = [];
-    let target = board.nodes[board.target];
-    currentNodesToAnimate.push(board.nodes[target.previousNode], target);
-  }
-
-}
 
 
   timeout(0);
@@ -437,16 +318,14 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
 
 
   function shortestPathChange(currentNode, previousNode, isActualTarget) {
-    console.log("shortest path change called....");
+
     if (currentNode === "object") {
       let element = document.getElementById(board.object);
       element.className = "objectTransparent";
-    } else if (currentNode.id !== board.start) {
+    }
+     else if (currentNode.id !== board.start) {
       if (currentNode.id !== board.target || currentNode.id === board.target && isActualTarget) {
         let currentHTMLNode = document.getElementById(currentNode.id);
-        if (type === "unweighted") {
-          currentHTMLNode.className = "shortest-path-unweighted";
-        } else {
           let direction;
           if (currentNode.relatesToObject && !currentNode.overwriteObjectRelation && currentNode.id !== board.target) {
             direction = "storedDirection";
@@ -454,6 +333,7 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
           } else {
             direction = "direction";
           }
+          console.log("direction ",direction);
           if (currentNode[direction] === "up") {
             currentHTMLNode.className = "shortest-path-up";
           } else if (currentNode[direction] === "down") {
@@ -464,19 +344,19 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
             currentHTMLNode.className = "shortest-path-left";
           } else {
             currentHTMLNode.className = "shortest-path";
-          }
-        }
+          } 
+        
       }
     }
-    if (previousNode) {
-      if (previousNode !== "object" && previousNode.id !== board.target && previousNode.id !== board.start) {
+
+
+
+
+
+    if (previousNode && previousNode !== "object" && previousNode.id !== board.target && previousNode.id !== board.start) {
         let previousHTMLNode = document.getElementById(previousNode.id);
-        previousHTMLNode.className = previousNode.weight === 15 ? "shortest-path weight" : "shortest-path";
-      }
-    } else {
-      let element = document.getElementById(board.start);
-      element.className = "startTransparent";
-    }
+        previousHTMLNode.className = "startTransparent" ;
+    } 
   }
 
 
@@ -602,10 +482,6 @@ Board.prototype.clearNodeStatuses = function() {
 };
 
 
-Board.prototype.redoAlgorithm = function() {
-  this.clearPath();
-};
-
 Board.prototype.reset = function(objectNotTransparent) {
   this.nodes[this.start].status = "start";
   document.getElementById(this.start).className = "startTransparent";
@@ -639,19 +515,9 @@ Board.prototype.toggleButtons = function() {
     this.buttonsOn = true;
 
     document.getElementById("startButtonStart").onclick = () => {
-
-      if (!this.currentAlgorithm) {
-        document.getElementById("startButtonStart").innerHTML = '<button class="btn btn-default navbar-btn" type="button">Pick an Algorithm!</button>'
-      } 
-      
-      else {
         this.clearPath("clickedButton");
         this.toggleButtons();
-        let weightedAlgorithms = ["dijkstra", "CLA", "CLA", "greedy"];
-        let unweightedAlgorithms = ["dfs", "bfs"];
         let success;
-        console.log(this.currentAlgorithm," yooooo   ",!this.numberOfObjects);
-        if (weightedAlgorithms.includes(this.currentAlgorithm)) {
           if (!this.numberOfObjects) {
             success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
             launchAnimations(this, success, "weighted");
@@ -661,18 +527,6 @@ Board.prototype.toggleButtons = function() {
             launchAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
           }
           this.algoDone = true;
-        } else if (unweightedAlgorithms.includes(this.currentAlgorithm)) {
-          if (!this.numberOfObjects) {
-            success = unweightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm);
-            launchAnimations(this, success, "unweighted");
-          } else {
-            this.isObject = true;
-            success = unweightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm);
-            launchAnimations(this, success, "unweighted", "object", this.currentAlgorithm);
-          }
-          this.algoDone = true;
-        }
-      }
     }
 
     document.getElementById("startButtonDijkstra").onclick = () => {
@@ -680,16 +534,6 @@ Board.prototype.toggleButtons = function() {
       this.currentAlgorithm = "dijkstra";
       this.changeStartNodeImages();
     }
-
-
-
-    document.getElementById("startButtonDFS").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize DFS!</button>'
-      this.currentAlgorithm = "dfs";
-      this.clearWeights();
-      this.changeStartNodeImages();
-    }
-
 
     document.getElementById("startButtonClearBoard").onclick = () => {
       document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add Bomb</a></li>';
@@ -930,11 +774,6 @@ function closestNode(nodes, unvisitedNodes) {
     if (!currentClosest || currentClosest.totalDistance > nodes[unvisitedNodes[i]].totalDistance) {
       currentClosest = nodes[unvisitedNodes[i]];
       index = i;
-    } else if (currentClosest.totalDistance === nodes[unvisitedNodes[i]].totalDistance) {
-      if (currentClosest.heuristicDistance > nodes[unvisitedNodes[i]].heuristicDistance) {
-        currentClosest = nodes[unvisitedNodes[i]];
-        index = i;
-      }
     }
   }
   unvisitedNodes.splice(index, 1);
@@ -954,11 +793,10 @@ function updateNeighbors(nodes, node, boardArray, target, name, start, heuristic
 
 function updateNode(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
   let distance = getDistance(currentNode, targetNode);
-  if (!targetNode.heuristicDistance) targetNode.heuristicDistance = manhattanDistance(targetNode, actualTargetNode);
-  let distanceToCompare = currentNode.distance + targetNode.weight + distance[0];
+  let distanceToCompare = currentNode.distance + distance[0];
   if (distanceToCompare < targetNode.distance) {
     targetNode.distance = distanceToCompare;
-    targetNode.totalDistance = targetNode.distance + targetNode.heuristicDistance;
+    targetNode.totalDistance = targetNode.distance;
     targetNode.previousNode = currentNode.id;
     targetNode.path = distance[1];
     targetNode.direction = distance[2];
@@ -1170,250 +1008,6 @@ module.exports = astar;
 14:[function(require,module,exports){
 const astar = require("./astar");
 
-function bidirectional(nodes, start, target, nodesToAnimate, boardArray, name, heuristic, board) {
-  if (name === "astar") return astar(nodes, start, target, nodesToAnimate, boardArray, name)
-  if (!start || !target || start === target) {
-    return false;
-  }
-  nodes[start].distance = 0;
-  nodes[start].direction = "right";
-  nodes[target].otherdistance = 0;
-  nodes[target].otherdirection = "left";
-  let visitedNodes = {};
-  let unvisitedNodesOne = Object.keys(nodes);
-  let unvisitedNodesTwo = Object.keys(nodes);
-  while (unvisitedNodesOne.length && unvisitedNodesTwo.length) {
-    let currentNode = closestNode(nodes, unvisitedNodesOne);
-    let secondCurrentNode = closestNodeTwo(nodes, unvisitedNodesTwo);
-    while ((currentNode.status === "wall" || secondCurrentNode.status === "wall") && unvisitedNodesOne.length && unvisitedNodesTwo.length) {
-      if (currentNode.status === "wall") currentNode = closestNode(nodes, unvisitedNodesOne);
-      if (secondCurrentNode.status === "wall") secondCurrentNode = closestNodeTwo(nodes, unvisitedNodesTwo);
-    }
-    if (currentNode.distance === Infinity || secondCurrentNode.otherdistance === Infinity) {
-      return false;
-    }
-    nodesToAnimate.push(currentNode);
-    nodesToAnimate.push(secondCurrentNode);
-    currentNode.status = "visited";
-    secondCurrentNode.status = "visited";
-    if (visitedNodes[currentNode.id]) {
-      board.middleNode = currentNode.id;
-      return "success";
-    } else if (visitedNodes[secondCurrentNode.id]) {
-      board.middleNode = secondCurrentNode.id;
-      return "success";
-    } else if (currentNode === secondCurrentNode) {
-      board.middleNode = secondCurrentNode.id;
-      return "success";
-    }
-    visitedNodes[currentNode.id] = true;
-    visitedNodes[secondCurrentNode.id] = true;
-    updateNeighbors(nodes, currentNode, boardArray, target, name, start, heuristic);
-    updateNeighborsTwo(nodes, secondCurrentNode, boardArray, start, name, target, heuristic);
-  }
-}
-
-function closestNode(nodes, unvisitedNodes) {
-  let currentClosest, index;
-  for (let i = 0; i < unvisitedNodes.length; i++) {
-    if (!currentClosest || currentClosest.distance > nodes[unvisitedNodes[i]].distance) {
-      currentClosest = nodes[unvisitedNodes[i]];
-      index = i;
-    }
-  }
-  unvisitedNodes.splice(index, 1);
-  return currentClosest;
-}
-
-function closestNodeTwo(nodes, unvisitedNodes) {
-  let currentClosest, index;
-  for (let i = 0; i < unvisitedNodes.length; i++) {
-    if (!currentClosest || currentClosest.otherdistance > nodes[unvisitedNodes[i]].otherdistance) {
-      currentClosest = nodes[unvisitedNodes[i]];
-      index = i;
-    }
-  }
-  unvisitedNodes.splice(index, 1);
-  return currentClosest;
-}
-
-function updateNeighbors(nodes, node, boardArray, target, name, start, heuristic) {
-  let neighbors = getNeighbors(node.id, nodes, boardArray);
-  for (let neighbor of neighbors) {
-    updateNode(node, nodes[neighbor], nodes[target], name, nodes, nodes[start], heuristic, boardArray);
-  }
-}
-
-function updateNeighborsTwo(nodes, node, boardArray, target, name, start, heuristic) {
-  let neighbors = getNeighbors(node.id, nodes, boardArray);
-  for (let neighbor of neighbors) {
-    updateNodeTwo(node, nodes[neighbor], nodes[target], name, nodes, nodes[start], heuristic, boardArray);
-  }
-}
-
-function updateNode(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
-  let distance = getDistance(currentNode, targetNode);
-  let weight = targetNode.weight === 15 ? 15 : 1;
-  let distanceToCompare = currentNode.distance + (weight + distance[0]) * manhattanDistance(targetNode, actualTargetNode);
-  if (distanceToCompare < targetNode.distance) {
-    targetNode.distance = distanceToCompare;
-    targetNode.previousNode = currentNode.id;
-    targetNode.path = distance[1];
-    targetNode.direction = distance[2];
-  }
-}
-
-function updateNodeTwo(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
-  let distance = getDistanceTwo(currentNode, targetNode);
-  let weight = targetNode.weight === 15 ? 15 : 1;
-  let distanceToCompare = currentNode.otherdistance + (weight + distance[0]) * manhattanDistance(targetNode, actualTargetNode);
-  if (distanceToCompare < targetNode.otherdistance) {
-    targetNode.otherdistance = distanceToCompare;
-    targetNode.otherpreviousNode = currentNode.id;
-    targetNode.path = distance[1];
-    targetNode.otherdirection = distance[2];
-  }
-}
-
-function getNeighbors(id, nodes, boardArray) {
-  let coordinates = id.split("-");
-  let x = parseInt(coordinates[0]);
-  let y = parseInt(coordinates[1]);
-  let neighbors = [];
-  let potentialNeighbor;
-  if (boardArray[x - 1] && boardArray[x - 1][y]) {
-    potentialNeighbor = `${(x - 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x + 1] && boardArray[x + 1][y]) {
-    potentialNeighbor = `${(x + 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x][y - 1]) {
-    potentialNeighbor = `${x.toString()}-${(y - 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x][y + 1]) {
-    potentialNeighbor = `${x.toString()}-${(y + 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  return neighbors;
-}
-
-function getDistance(nodeOne, nodeTwo) {
-  let currentCoordinates = nodeOne.id.split("-");
-  let targetCoordinates = nodeTwo.id.split("-");
-  let x1 = parseInt(currentCoordinates[0]);
-  let y1 = parseInt(currentCoordinates[1]);
-  let x2 = parseInt(targetCoordinates[0]);
-  let y2 = parseInt(targetCoordinates[1]);
-  if (x2 < x1) {
-    if (nodeOne.direction === "up") {
-      return [1, ["f"], "up"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["l", "f"], "up"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["r", "f"], "up"];
-    } else if (nodeOne.direction === "down") {
-      return [3, ["r", "r", "f"], "up"];
-    }
-  } else if (x2 > x1) {
-    if (nodeOne.direction === "up") {
-      return [3, ["r", "r", "f"], "down"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["r", "f"], "down"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["l", "f"], "down"];
-    } else if (nodeOne.direction === "down") {
-      return [1, ["f"], "down"];
-    }
-  }
-  if (y2 < y1) {
-    if (nodeOne.direction === "up") {
-      return [2, ["l", "f"], "left"];
-    } else if (nodeOne.direction === "right") {
-      return [3, ["l", "l", "f"], "left"];
-    } else if (nodeOne.direction === "left") {
-      return [1, ["f"], "left"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["r", "f"], "left"];
-    }
-  } else if (y2 > y1) {
-    if (nodeOne.direction === "up") {
-      return [2, ["r", "f"], "right"];
-    } else if (nodeOne.direction === "right") {
-      return [1, ["f"], "right"];
-    } else if (nodeOne.direction === "left") {
-      return [3, ["r", "r", "f"], "right"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["l", "f"], "right"];
-    }
-  }
-}
-
-function getDistanceTwo(nodeOne, nodeTwo) {
-  let currentCoordinates = nodeOne.id.split("-");
-  let targetCoordinates = nodeTwo.id.split("-");
-  let x1 = parseInt(currentCoordinates[0]);
-  let y1 = parseInt(currentCoordinates[1]);
-  let x2 = parseInt(targetCoordinates[0]);
-  let y2 = parseInt(targetCoordinates[1]);
-  if (x2 < x1) {
-    if (nodeOne.otherdirection === "up") {
-      return [1, ["f"], "up"];
-    } else if (nodeOne.otherdirection === "right") {
-      return [2, ["l", "f"], "up"];
-    } else if (nodeOne.otherdirection === "left") {
-      return [2, ["r", "f"], "up"];
-    } else if (nodeOne.otherdirection === "down") {
-      return [3, ["r", "r", "f"], "up"];
-    }
-  } else if (x2 > x1) {
-    if (nodeOne.otherdirection === "up") {
-      return [3, ["r", "r", "f"], "down"];
-    } else if (nodeOne.otherdirection === "right") {
-      return [2, ["r", "f"], "down"];
-    } else if (nodeOne.otherdirection === "left") {
-      return [2, ["l", "f"], "down"];
-    } else if (nodeOne.otherdirection === "down") {
-      return [1, ["f"], "down"];
-    }
-  }
-  if (y2 < y1) {
-    if (nodeOne.otherdirection === "up") {
-      return [2, ["l", "f"], "left"];
-    } else if (nodeOne.otherdirection === "right") {
-      return [3, ["l", "l", "f"], "left"];
-    } else if (nodeOne.otherdirection === "left") {
-      return [1, ["f"], "left"];
-    } else if (nodeOne.otherdirection === "down") {
-      return [2, ["r", "f"], "left"];
-    }
-  } else if (y2 > y1) {
-    if (nodeOne.otherdirection === "up") {
-      return [2, ["r", "f"], "right"];
-    } else if (nodeOne.otherdirection === "right") {
-      return [1, ["f"], "right"];
-    } else if (nodeOne.otherdirection === "left") {
-      return [3, ["r", "r", "f"], "right"];
-    } else if (nodeOne.otherdirection === "down") {
-      return [2, ["l", "f"], "right"];
-    }
-  }
-}
-
-function manhattanDistance(nodeOne, nodeTwo) {
-  let nodeOneCoordinates = nodeOne.id.split("-").map(ele => parseInt(ele));
-  let nodeTwoCoordinates = nodeTwo.id.split("-").map(ele => parseInt(ele));
-  let xChange = Math.abs(nodeOneCoordinates[0] - nodeTwoCoordinates[0]);
-  let yChange = Math.abs(nodeOneCoordinates[1] - nodeTwoCoordinates[1]);
-  return (xChange + yChange);
-}
-
-
-
-module.exports = bidirectional;
-
 },{"./astar":13}],
 
 15:[function(require,module,exports){
@@ -1431,7 +1025,9 @@ function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArra
 
   let unvisitedNodes = Object.keys(nodes);
   while (unvisitedNodes.length) {
+
     let currentNode = closestNode(nodes, unvisitedNodes);
+    console.log("currentNode: ", currentNode);
     while (currentNode.status === "wall" && unvisitedNodes.length) {
       currentNode = closestNode(nodes, unvisitedNodes)
     }
@@ -1441,11 +1037,8 @@ function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArra
     nodesToAnimate.push(currentNode);
     currentNode.status = "visited";
     if (currentNode.id === target) return "success!";
-    if (name === "CLA" || name === "greedy") {
-      updateNeighbors(nodes, currentNode, boardArray, target, name, start, heuristic);
-    } else if (name === "dijkstra") {
-      updateNeighbors(nodes, currentNode, boardArray);
-    }
+    updateNeighbors(nodes, currentNode, boardArray);
+  
   }
 }
 
@@ -1478,21 +1071,8 @@ function updateNeighbors(nodes, node, boardArray, target, name, start, heuristic
 function updateNode(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
   let distance = getDistance(currentNode, targetNode);
   let distanceToCompare;
-  if (actualTargetNode && name === "CLA") {
-    let weight = targetNode.weight === 15 ? 15 : 1;
-    if (heuristic === "manhattanDistance") {
-      distanceToCompare = currentNode.distance + (distance[0] + weight) * manhattanDistance(targetNode, actualTargetNode);
-    } else if (heuristic === "poweredManhattanDistance") {
-      distanceToCompare = currentNode.distance + targetNode.weight + distance[0] + Math.pow(manhattanDistance(targetNode, actualTargetNode), 2);
-    } else if (heuristic === "extraPoweredManhattanDistance") {
-      distanceToCompare = currentNode.distance + (distance[0] + weight) * Math.pow(manhattanDistance(targetNode, actualTargetNode), 7);
-    }
-    let startNodeManhattanDistance = manhattanDistance(actualStartNode, actualTargetNode);
-  } else if (actualTargetNode && name === "greedy") {
-    distanceToCompare = targetNode.weight + distance[0] + manhattanDistance(targetNode, actualTargetNode);
-  } else {
+
     distanceToCompare = currentNode.distance + targetNode.weight + distance[0];
-  }
   if (distanceToCompare < targetNode.distance) {
     targetNode.distance = distanceToCompare;
     targetNode.previousNode = currentNode.id;
@@ -1577,15 +1157,6 @@ function getDistance(nodeOne, nodeTwo) {
     }
   }
 }
-
-function manhattanDistance(nodeOne, nodeTwo) {
-  let nodeOneCoordinates = nodeOne.id.split("-").map(ele => parseInt(ele));
-  let nodeTwoCoordinates = nodeTwo.id.split("-").map(ele => parseInt(ele));
-  let xChange = Math.abs(nodeOneCoordinates[0] - nodeTwoCoordinates[0]);
-  let yChange = Math.abs(nodeOneCoordinates[1] - nodeTwoCoordinates[1]);
-  return (xChange + yChange);
-}
-
 
 module.exports = weightedSearchAlgorithm;
 

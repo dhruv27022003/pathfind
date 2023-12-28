@@ -209,7 +209,7 @@
 }
 
 .visitedTargetNodeBlue {
-  background-image: url(circle.svg);
+  /* background-image: url(circle.svg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -220,7 +220,7 @@
   animation-direction: alternate;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  animation-play-state: running;
+  animation-play-state: running; */
 }
 
 .visitedTargetNodePurple {
