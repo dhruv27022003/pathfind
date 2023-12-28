@@ -1,14 +1,3 @@
-/*.demonstration {
-  border: 2px solid green;
-}
-
-.other {
-  border: 2px solid red;
-}
-
-.otherother {
-  border: 2px solid grey;
-}*/
 
 .start{
   /*border: 1px solid rgb(175, 216, 248);*/
@@ -17,25 +6,9 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  animation-name: specialNodes;
+  animation-name: customAnimation;
   animation-duration: 2.0s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
 }
-
-.instantshortest-path-up{
-  /*border: 1px solid rgb(175, 216, 248);*/
-  background:url(triangletwo-up.svg);
-  background-color: rgb(255, 254, 106);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-
 .shortest-path-up{
   /*border: 1px solid rgb(175, 216, 248);*/
   background:url(triangletwo-up.svg);
@@ -45,12 +18,7 @@
   background-size: contain;
   animation-name: triangletwo;
   animation-duration: 1.5s;
-  animation-timing-function: linear;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
+
 }
 
 .instantshortest-path-down{
@@ -149,7 +117,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  animation-name: specialNodes;
+  animation-name: customAnimation;
   animation-duration: 2.0s;
   animation-timing-function: ease-out;
   animation-delay: 0;
@@ -163,7 +131,7 @@
   /*border: 1px solid rgb(175, 216, 248);*/
   background-image:url(triangletwo-right.svg);
   /*background-color: rgb(255, 254, 106);*/
-  background-position: center;
+  /* background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
   animation-name: visitedStartNodeBlueAnimation;
@@ -173,7 +141,7 @@
   animation-direction: alternate;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  animation-play-state: running;
+  animation-play-state: running; */
 }
 
 .visitedStartNodePurple {
@@ -209,7 +177,7 @@
 }
 
 .visitedTargetNodeBlue {
-  /* background-image: url(circle.svg);
+  background-image: url(circle.svg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -220,71 +188,7 @@
   animation-direction: alternate;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  animation-play-state: running; */
-}
-
-.visitedTargetNodePurple {
-  background-image: url(circle.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  animation-name: visitedStartNodePurpleAnimation;
-  animation-duration: 2.0s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
   animation-play-state: running;
-}
-
-@keyframes visitedStartNodePurpleAnimation {
-  0% {
-    transform: scale(.3);
-    background-color: rgba(41, 4, 24, 0.75);
-    border-radius: 100%;
-  }
-
-  50% {
-    background-color: rgba(97, 0, 20, 0.75);
-  }
-
-  75% {
-    transform: scale(1.2);
-    background-color: rgba(216, 5, 141, 0.75)
-  }
-
-  100% {
-    transform: scale(1.0);
-    background-color: rgba(178, 67, 255, 0.75);
-  }
-}
-
-@keyframes visitedStartNodeBlueAnimation {
-  0% {
-    transform: scale(.3);
-    background-color: rgba(0, 0, 66, 0.75);
-    border-radius: 100%;
-  }
-
-  50% {
-    background-color: rgba(17, 104, 217, 0.75);
-  }
-
-  75% {
-    transform: scale(1.2);
-    background-color: rgba(0, 217, 159, 0.75);
-  }
-
-  100% {
-    transform: scale(1.0);
-    background-color: rgba(0, 190, 218, 0.75);
-  }
-}
-
-.strikethrough {
-  color: rgb(185, 15, 15);
-  text-decoration: line-through;
 }
 
 #algorithmDescriptor {
@@ -309,98 +213,6 @@
   z-index: 1;
 }
 
-#tutorial {
-  position: absolute;
-  z-index: 3;
-  background-color: rgba(255, 255, 255, 1);
-  width: 50%;
-  height: 70%;
-  border: 2px solid #34495e;
-  border-radius: 4px;
-  text-align: center;
-  float: right;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: auto;
-  margin-bottom: auto;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-
-
-
-#previousButton {
-  color: #ffffff;
-  background-color: #1abc9c;
-  position: absolute;
-  right: 12%;
-  bottom: 2%;
-}
-
-#skipButton {
-  color: #ffffff;
-  background-color: #1abc9c;
-  position: absolute;
-  left: 2%;
-  bottom: 2%;
-}
-
-#finishButton {
-  color: #ffffff;
-  background-color: #1abc9c;
-  position: absolute;
-  right: 2%;
-  bottom: 2%;
-}
-
-#finishButton:hover,
-#nextButton:hover,
-#previousButton:hover,
-#skipButton:hover {
-  background-color: #48c9b0;
-}
-
-#tutorialCounter {
-  position: absolute;
-  right: 2%;
-  top: 2%;
-}
-
-#mainTutorialImage {
-  width: 25%;
-  padding-top: 5px;
-}
-
-#secondTutorialImage {
-  padding-top: 5px;
-}
-
-#tutorial > h3 {
-  padding-bottom: 5px;
-}
-
-#tutorial > h6 {
-  padding: 5px 20px 5px 20px;
-}
-
-#tutorial > p {
-  padding: 5px 20px 5px 20px;
-}
-
-#tutorial > ul li {
-  list-style: none;
-  padding-bottom: 5px;
-  padding-right: 40px;
-  font-size: 14px;
-}
-
-/*#otherText > ul li {
-  display: inline-block;
-  list-style: none;
-  padding: 10px 50px 0 0;
-}*/
 
 #board{
   border-collapse:collapse;
@@ -418,17 +230,8 @@
 }
 
 #board {
-  margin-left: 5px;
-  margin-right: 5px;
+  margin: 20px;
 }
-
-/*#tutorial {
-  position: absolute;
-  color: red;
-  height: 50px;
-  width: 200px;
-  z-index: 2;
-}*/
 
 #board td{
   /*border: 1px solid rgb(175, 216, 248);*/
@@ -447,15 +250,7 @@
   /*background-color: rgba(178, 67, 255, 0.75);*/
 }
 
-.instantvisited.weight {
-  border: 1px solid rgb(175, 216, 248);
-  background-color: rgba(0, 190, 218, 0.75);
-  /*background-color: rgba(178, 67, 255, 0.75);*/
-  background-image: url(weight.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
+
 
 .visited{
   border: 1px solid rgb(175, 216, 248);
@@ -469,21 +264,7 @@
   animation-play-state: running;
 }
 
-.visited.weight{
-  border: 1px solid rgb(175, 216, 248);
-  background-image: url(weight.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  animation-name: visitedAnimation;
-  animation-duration: 1.5s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
-}
+
 
 @keyframes visitedAnimation {
   0% {
@@ -530,135 +311,18 @@
   }
 
   100% {
-    transform: scale(1.0);
+    transform: scale(1.1);
     background-color: rgb(12, 53, 71);
   }
 }
 
-.instantvisitedobject{
-  border: 1px solid rgb(175, 216, 248);
-  background-color: rgba(178, 67, 255, 0.75);
-  /*background-color: rgba(0, 190, 218, 0.75);*/
-}
 
-.instantvisitedobject.weight{
-  border: 1px solid rgb(175, 216, 248);
-  background-color: rgba(178, 67, 255, 0.75);
-  /*background-color: rgba(0, 190, 218, 0.75);*/
-  background-image: url(weight.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-
-.visitedobject{
-  /*background:red*/
-  border: 1px solid rgb(175, 216, 248);
-  animation-name: visitedObjectAnimation;
-  animation-duration: 1.5s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
-}
-
-.visitedobject.weight{
-  /*background:red*/
-  border: 1px solid rgb(175, 216, 248);
-  background-image: url(weight.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  animation-name: visitedObjectAnimation;
-  animation-duration: 1.5s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
-}
-
-@keyframes visitedObjectAnimation {
-  0% {
-    transform: scale(.3);
-    background-color: rgba(41, 4, 24, 0.75);
-    border-radius: 100%;
-  }
-
-  50% {
-    background-color: rgba(97, 0, 20, 0.75);
-  }
-
-  75% {
-    transform: scale(1.2);
-    background-color: rgba(216, 5, 141, 0.75)
-  }
-
-  100% {
-    transform: scale(1.0);
-    background-color: rgba(178, 67, 255, 0.75);
-  }
-}
 
 .unvisited{
   border: 1px solid rgb(175, 216, 248);
   background-color:white
 }
 
-.borderlessWeight {
-  background-image: url(weight.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  animation-name: unvisitedWeightAnimation;
-  animation-duration: 0.3s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
-}
-
-.unvisited.weight{
-  /*border: 1px solid rgb(175, 216, 248);*/
-  background-image: url(weight.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  animation-name: unvisitedWeightAnimation;
-  animation-duration: 0.3s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
-}
-
-@keyframes unvisitedWeightAnimation {
-  0% {
-    transform: scale(.3);
-    /*background-color: rgb(12, 53, 71);*/
-  }
-
-  50% {
-    transform: scale(1.2);
-    /*background-color: rgb(12, 53, 71);*/
-  }
-
-  100% {
-    transform: scale(1.0);
-    /*background-color: rgb(12, 53, 71);*/
-  }
-}
-
-.unvisited.mud{
-  background:brown
-}
 
 .current{
   border: 1px solid rgb(175, 216, 248);
@@ -672,7 +336,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  animation-name: specialNodes;
+  animation-name: customAnimation;
   animation-duration: 2.0s;
   animation-timing-function: ease-out;
   animation-delay: 0;
@@ -700,7 +364,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  animation-name: specialNodes;
+  animation-name: customAnimation;
   animation-duration: 2.0s;
   animation-timing-function: ease-out;
   animation-delay: 0;
@@ -718,7 +382,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  animation-name: specialNodes;
+  animation-name: customAnimation;
   animation-duration: 2.0s;
   animation-timing-function: ease-out;
   animation-delay: 0;
@@ -728,20 +392,17 @@
   animation-play-state: running;
 }
 
-@keyframes specialNodes {
+@keyframes customAnimation {
   0% {
-    transform: scale(.3);
-    /*background-color: darkslategrey;*/
+    transform: scale(.5);
   }
 
   50% {
     transform: scale(1.2);
-    /*background-color: darkslategrey;*/
   }
 
   100% {
     transform: scale(1.0);
-    /*background-color: darkslategrey;*/
   }
 }
 

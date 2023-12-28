@@ -58,17 +58,12 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
 module.exports = launchAnimations;
 
 },{"../pathfindingAlgorithms/weightedSearchAlgorithm":13}],
-2:[function(require,module,exports){
 
 
-},{"../pathfindingAlgorithms/weightedSearchAlgorithm":13}],3:[function(require,module,exports){
-
-
-},{}],4:[function(require,module,exports){
+4:[function(require,module,exports){
 const Node = require("./node");
 const launchAnimations = require("./animations/launchAnimations");
 const weightedSearchAlgorithm = require("./pathfindingAlgorithms/weightedSearchAlgorithm");
-const getDistance = require("./getDistance");
 
 function Board(height, width) {
   this.height = height;
@@ -591,7 +586,7 @@ Board.prototype.toggleButtons = function() {
 
     document.getElementById("startButtonAddObject").onclick = () => {
       let innerHTML = document.getElementById("startButtonAddObject").innerHTML;
-      if (this.currentAlgorithm !== "bidirectional") {
+
         if (innerHTML.includes("Add")) {
           let r = Math.floor(this.height / 2);
           let c = Math.floor(2 * this.width / 4);
@@ -606,16 +601,7 @@ Board.prototype.toggleButtons = function() {
             this.nodes[objectNodeId].status = "object";
             document.getElementById(objectNodeId).className = "object";
           }
-        } else {
-          let objectNodeId = this.object;
-          document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add Bomb</a></li>';
-          document.getElementById(objectNodeId).className = "unvisited";
-          this.object = null;
-          this.numberOfObjects = 0;
-          this.nodes[objectNodeId].status = "unvisited";
-          this.isObject = false;
-          this.clearPath("clickedButton");
-        }
+
       }
 
     }
@@ -662,26 +648,9 @@ window.onkeyup = (e) => {
 }
 
 },{"./animations/launchAnimations":
-1,"./animations/launchInstantAnimations":
-2,"./animations/mazeGenerationAnimations":
-3,"./getDistance":5,"./mazeAlgorithms/otherMaze":6,"./mazeAlgorithms/otherOtherMaze":7,"./mazeAlgorithms/recursiveDivisionMaze":8,"./mazeAlgorithms/simpleDemonstration":9,"./mazeAlgorithms/stairDemonstration":10,"./mazeAlgorithms/weightsDemonstration":11,"./node":12,"./pathfindingAlgorithms/astar":13,"./pathfindingAlgorithms/bidirectional":14,"./pathfindingAlgorithms/weightedSearchAlgorithm":13}],
-5:[function(require,module,exports){
-},{}],
-
-6:[function(require,module,exports){
-
-},{}],
-7:[function(require,module,exports){
-
-},{}],
-8:[function(require,module,exports){
-},{}],
-9:[function(require,module,exports){
-},{}],10:[function(require,module,exports){
-
-},{}],11:[function(require,module,exports){
-
-},{}],
+1,
+"./node":12,
+"./pathfindingAlgorithms/weightedSearchAlgorithm":13}],
 
 12:[function(require,module,exports){
 function Node(id, status) {
@@ -859,4 +828,4 @@ function getDistance(nodeOne, nodeTwo) {
 
 module.exports = weightedSearchAlgorithm;
 
-},{"./astar":13}]},{},[4]);
+},{}]},{},[4]);
