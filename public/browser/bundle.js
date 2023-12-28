@@ -2,7 +2,6 @@
   
   1:[function(require,module,exports){
 const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearchAlgorithm");
-const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
 
 function launchAnimations(board, success, type, object, algorithm, heuristic) {
 
@@ -58,18 +57,17 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
 
 module.exports = launchAnimations;
 
-},{"../pathfindingAlgorithms/unweightedSearchAlgorithm":15,"../pathfindingAlgorithms/weightedSearchAlgorithm":16}],
+},{"../pathfindingAlgorithms/weightedSearchAlgorithm":13}],
 2:[function(require,module,exports){
 
 
-},{"../pathfindingAlgorithms/unweightedSearchAlgorithm":15,"../pathfindingAlgorithms/weightedSearchAlgorithm":16}],3:[function(require,module,exports){
+},{"../pathfindingAlgorithms/weightedSearchAlgorithm":13}],3:[function(require,module,exports){
 
 
 },{}],4:[function(require,module,exports){
 const Node = require("./node");
 const launchAnimations = require("./animations/launchAnimations");
 const weightedSearchAlgorithm = require("./pathfindingAlgorithms/weightedSearchAlgorithm");
-const unweightedSearchAlgorithm = require("./pathfindingAlgorithms/unweightedSearchAlgorithm");
 const getDistance = require("./getDistance");
 
 function Board(height, width) {
@@ -400,17 +398,7 @@ Board.prototype.clearPath = function(clickedButton) {
         }
         this.algoDone = true;
       } 
-      else if (unweightedAlgorithms.includes(this.currentAlgorithm)) {
-        if (!this.numberOfObjects) {
-          success = unweightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm);
-          launchAnimations(this, success, "unweighted");
-        } else {
-          this.isObject = true;
-          success = unweightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm);
-          launchAnimations(this, success, "unweighted", "object", this.currentAlgorithm);
-        }
-        this.algoDone = true;
-      }
+
     }
   }
 
@@ -635,41 +623,23 @@ Board.prototype.toggleButtons = function() {
     document.getElementById("startButtonClearPath").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonClearWalls").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonClearBoard").className = "navbar-inverse navbar-nav";
-    if (this.currentAlgorithm !== "bidirectional") {
-      document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
-    }
-  document.getElementById("startButtonDFS").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonDijkstra").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonAStar").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustFast").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustAverage").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustSlow").className = "navbar-inverse navbar-nav";
     document.getElementById("actualStartButton").style.backgroundColor = "";
 
   } else {
     this.buttonsOn = false;
-    document.getElementById("startButtonDFS").onclick = null;
     document.getElementById("startButtonDijkstra").onclick = null;
-    document.getElementById("startButtonAStar").onclick = null;
     document.getElementById("startButtonAddObject").onclick = null;
     document.getElementById("startButtonClearPath").onclick = null;
     document.getElementById("startButtonClearWalls").onclick = null;
     document.getElementById("startButtonClearBoard").onclick = null;
     document.getElementById("startButtonStart").onclick = null;
-    document.getElementById("adjustFast").onclick = null;
-    document.getElementById("adjustAverage").onclick = null;
-    document.getElementById("adjustSlow").onclick = null;
-
-    document.getElementById("adjustFast").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("adjustAverage").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("adjustSlow").className = "navbar-inverse navbar-nav disabledA";
+    
     document.getElementById("startButtonClearPath").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonClearWalls").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonClearBoard").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonDFS").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonDijkstra").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonAStar").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("actualStartButton").style.backgroundColor = "rgb(185, 15, 15)";
   }
 
@@ -694,7 +664,7 @@ window.onkeyup = (e) => {
 },{"./animations/launchAnimations":
 1,"./animations/launchInstantAnimations":
 2,"./animations/mazeGenerationAnimations":
-3,"./getDistance":5,"./mazeAlgorithms/otherMaze":6,"./mazeAlgorithms/otherOtherMaze":7,"./mazeAlgorithms/recursiveDivisionMaze":8,"./mazeAlgorithms/simpleDemonstration":9,"./mazeAlgorithms/stairDemonstration":10,"./mazeAlgorithms/weightsDemonstration":11,"./node":12,"./pathfindingAlgorithms/astar":13,"./pathfindingAlgorithms/bidirectional":14,"./pathfindingAlgorithms/unweightedSearchAlgorithm":15,"./pathfindingAlgorithms/weightedSearchAlgorithm":16}],
+3,"./getDistance":5,"./mazeAlgorithms/otherMaze":6,"./mazeAlgorithms/otherOtherMaze":7,"./mazeAlgorithms/recursiveDivisionMaze":8,"./mazeAlgorithms/simpleDemonstration":9,"./mazeAlgorithms/stairDemonstration":10,"./mazeAlgorithms/weightsDemonstration":11,"./node":12,"./pathfindingAlgorithms/astar":13,"./pathfindingAlgorithms/bidirectional":14,"./pathfindingAlgorithms/weightedSearchAlgorithm":13}],
 5:[function(require,module,exports){
 },{}],
 
@@ -745,276 +715,6 @@ module.exports = Node;
 },{}],
 
 13:[function(require,module,exports){
-function astar(nodes, start, target, nodesToAnimate, boardArray, name, heuristic) {
-  if (!start || !target || start === target) {
-    return false;
-  }
-  nodes[start].distance = 0;
-  nodes[start].totalDistance = 0;
-  nodes[start].direction = "up";
-  let unvisitedNodes = Object.keys(nodes);
-  while (unvisitedNodes.length) {
-    let currentNode = closestNode(nodes, unvisitedNodes);
-    while (currentNode.status === "wall" && unvisitedNodes.length) {
-      currentNode = closestNode(nodes, unvisitedNodes)
-    }
-    if (currentNode.distance === Infinity) return false;
-    nodesToAnimate.push(currentNode);
-    currentNode.status = "visited";
-    if (currentNode.id === target) {
-      return "success!";
-    }
-    updateNeighbors(nodes, currentNode, boardArray, target, name, start, heuristic);
-  }
-}
-
-function closestNode(nodes, unvisitedNodes) {
-  let currentClosest, index;
-  for (let i = 0; i < unvisitedNodes.length; i++) {
-    if (!currentClosest || currentClosest.totalDistance > nodes[unvisitedNodes[i]].totalDistance) {
-      currentClosest = nodes[unvisitedNodes[i]];
-      index = i;
-    }
-  }
-  unvisitedNodes.splice(index, 1);
-  return currentClosest;
-}
-
-function updateNeighbors(nodes, node, boardArray, target, name, start, heuristic) {
-  let neighbors = getNeighbors(node.id, nodes, boardArray);
-  for (let neighbor of neighbors) {
-    if (target) {
-      updateNode(node, nodes[neighbor], nodes[target], name, nodes, nodes[start], heuristic, boardArray);
-    } else {
-      updateNode(node, nodes[neighbor]);
-    }
-  }
-}
-
-function updateNode(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
-  let distance = getDistance(currentNode, targetNode);
-  let distanceToCompare = currentNode.distance + distance[0];
-  if (distanceToCompare < targetNode.distance) {
-    targetNode.distance = distanceToCompare;
-    targetNode.totalDistance = targetNode.distance;
-    targetNode.previousNode = currentNode.id;
-    targetNode.path = distance[1];
-    targetNode.direction = distance[2];
-  }
-}
-
-function getNeighbors(id, nodes, boardArray) {
-  let coordinates = id.split("-");
-  let x = parseInt(coordinates[0]);
-  let y = parseInt(coordinates[1]);
-  let neighbors = [];
-  let potentialNeighbor;
-  if (boardArray[x - 1] && boardArray[x - 1][y]) {
-    potentialNeighbor = `${(x - 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x + 1] && boardArray[x + 1][y]) {
-    potentialNeighbor = `${(x + 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x][y - 1]) {
-    potentialNeighbor = `${x.toString()}-${(y - 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x][y + 1]) {
-    potentialNeighbor = `${x.toString()}-${(y + 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-
-  return neighbors;
-}
-
-
-function getDistance(nodeOne, nodeTwo) {
-  let currentCoordinates = nodeOne.id.split("-");
-  let targetCoordinates = nodeTwo.id.split("-");
-  let x1 = parseInt(currentCoordinates[0]);
-  let y1 = parseInt(currentCoordinates[1]);
-  let x2 = parseInt(targetCoordinates[0]);
-  let y2 = parseInt(targetCoordinates[1]);
-  if (x2 < x1 && y1 === y2) {
-    if (nodeOne.direction === "up") {
-      return [1, ["f"], "up"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["l", "f"], "up"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["r", "f"], "up"];
-    } else if (nodeOne.direction === "down") {
-      return [3, ["r", "r", "f"], "up"];
-    } else if (nodeOne.direction === "up-right") {
-      return [1.5, null, "up"];
-    } else if (nodeOne.direction === "down-right") {
-      return [2.5, null, "up"];
-    } else if (nodeOne.direction === "up-left") {
-      return [1.5, null, "up"];
-    } else if (nodeOne.direction === "down-left") {
-      return [2.5, null, "up"];
-    }
-  } else if (x2 > x1 && y1 === y2) {
-    if (nodeOne.direction === "up") {
-      return [3, ["r", "r", "f"], "down"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["r", "f"], "down"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["l", "f"], "down"];
-    } else if (nodeOne.direction === "down") {
-      return [1, ["f"], "down"];
-    } else if (nodeOne.direction === "up-right") {
-      return [2.5, null, "down"];
-    } else if (nodeOne.direction === "down-right") {
-      return [1.5, null, "down"];
-    } else if (nodeOne.direction === "up-left") {
-      return [2.5, null, "down"];
-    } else if (nodeOne.direction === "down-left") {
-      return [1.5, null, "down"];
-    }
-  }
-  if (y2 < y1 && x1 === x2) {
-    if (nodeOne.direction === "up") {
-      return [2, ["l", "f"], "left"];
-    } else if (nodeOne.direction === "right") {
-      return [3, ["l", "l", "f"], "left"];
-    } else if (nodeOne.direction === "left") {
-      return [1, ["f"], "left"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["r", "f"], "left"];
-    } else if (nodeOne.direction === "up-right") {
-      return [2.5, null, "left"];
-    } else if (nodeOne.direction === "down-right") {
-      return [2.5, null, "left"];
-    } else if (nodeOne.direction === "up-left") {
-      return [1.5, null, "left"];
-    } else if (nodeOne.direction === "down-left") {
-      return [1.5, null, "left"];
-    }
-  } else if (y2 > y1 && x1 === x2) {
-    if (nodeOne.direction === "up") {
-      return [2, ["r", "f"], "right"];
-    } else if (nodeOne.direction === "right") {
-      return [1, ["f"], "right"];
-    } else if (nodeOne.direction === "left") {
-      return [3, ["r", "r", "f"], "right"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["l", "f"], "right"];
-    } else if (nodeOne.direction === "up-right") {
-      return [1.5, null, "right"];
-    } else if (nodeOne.direction === "down-right") {
-      return [1.5, null, "right"];
-    } else if (nodeOne.direction === "up-left") {
-      return [2.5, null, "right"];
-    } else if (nodeOne.direction === "down-left") {
-      return [2.5, null, "right"];
-    }
-  } /*else if (x2 < x1 && y2 < y1) {
-    if (nodeOne.direction === "up") {
-      return [1.5, ["f"], "up-left"];
-    } else if (nodeOne.direction === "right") {
-      return [2.5, ["l", "f"], "up-left"];
-    } else if (nodeOne.direction === "left") {
-      return [1.5, ["r", "f"], "up-left"];
-    } else if (nodeOne.direction === "down") {
-      return [2.5, ["r", "r", "f"], "up-left"];
-    } else if (nodeOne.direction === "up-right") {
-      return [2, null, "up-left"];
-    } else if (nodeOne.direction === "down-right") {
-      return [3, null, "up-left"];
-    } else if (nodeOne.direction === "up-left") {
-      return [1, null, "up-left"];
-    } else if (nodeOne.direction === "down-left") {
-      return [2, null, "up-left"];
-    }
-  } else if (x2 < x1 && y2 > y1) {
-    if (nodeOne.direction === "up") {
-      return [1.5, ["f"], "up-right"];
-    } else if (nodeOne.direction === "right") {
-      return [1.5, ["l", "f"], "up-right"];
-    } else if (nodeOne.direction === "left") {
-      return [2.5, ["r", "f"], "up-right"];
-    } else if (nodeOne.direction === "down") {
-      return [2.5, ["r", "r", "f"], "up-right"];
-    } else if (nodeOne.direction === "up-right") {
-      return [1, null, "up-right"];
-    } else if (nodeOne.direction === "down-right") {
-      return [2, null, "up-right"];
-    } else if (nodeOne.direction === "up-left") {
-      return [2, null, "up-right"];
-    } else if (nodeOne.direction === "down-left") {
-      return [3, null, "up-right"];
-    }
-  } else if (x2 > x1 && y2 > y1) {
-    if (nodeOne.direction === "up") {
-      return [2.5, ["f"], "down-right"];
-    } else if (nodeOne.direction === "right") {
-      return [1.5, ["l", "f"], "down-right"];
-    } else if (nodeOne.direction === "left") {
-      return [2.5, ["r", "f"], "down-right"];
-    } else if (nodeOne.direction === "down") {
-      return [1.5, ["r", "r", "f"], "down-right"];
-    } else if (nodeOne.direction === "up-right") {
-      return [2, null, "down-right"];
-    } else if (nodeOne.direction === "down-right") {
-      return [1, null, "down-right"];
-    } else if (nodeOne.direction === "up-left") {
-      return [3, null, "down-right"];
-    } else if (nodeOne.direction === "down-left") {
-      return [2, null, "down-right"];
-    }
-  } else if (x2 > x1 && y2 < y1) {
-    if (nodeOne.direction === "up") {
-      return [2.5, ["f"], "down-left"];
-    } else if (nodeOne.direction === "right") {
-      return [2.5, ["l", "f"], "down-left"];
-    } else if (nodeOne.direction === "left") {
-      return [1.5, ["r", "f"], "down-left"];
-    } else if (nodeOne.direction === "down") {
-      return [1.5, ["r", "r", "f"], "down-left"];
-    } else if (nodeOne.direction === "up-right") {
-      return [3, null, "down-left"];
-    } else if (nodeOne.direction === "down-right") {
-      return [2, null, "down-left"];
-    } else if (nodeOne.direction === "up-left") {
-      return [2, null, "down-left"];
-    } else if (nodeOne.direction === "down-left") {
-      return [1, null, "down-left"];
-    }
-  }*/
-}
-
-function manhattanDistance(nodeOne, nodeTwo) {
-  let nodeOneCoordinates = nodeOne.id.split("-").map(ele => parseInt(ele));
-  let nodeTwoCoordinates = nodeTwo.id.split("-").map(ele => parseInt(ele));
-  let xOne = nodeOneCoordinates[0];
-  let xTwo = nodeTwoCoordinates[0];
-  let yOne = nodeOneCoordinates[1];
-  let yTwo = nodeTwoCoordinates[1];
-
-  let xChange = Math.abs(xOne - xTwo);
-  let yChange = Math.abs(yOne - yTwo);
-
-  return (xChange + yChange);
-}
-
-
-
-module.exports = astar;
-
-},{}],
-
-14:[function(require,module,exports){
-const astar = require("./astar");
-
-},{"./astar":13}],
-
-15:[function(require,module,exports){
-
-},{}],
-
-16:[function(require,module,exports){
 
 function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArray, name, heuristic) {
   if (!start || !target || start === target) {
@@ -1027,7 +727,6 @@ function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArra
   while (unvisitedNodes.length) {
 
     let currentNode = closestNode(nodes, unvisitedNodes);
-    console.log("currentNode: ", currentNode);
     while (currentNode.status === "wall" && unvisitedNodes.length) {
       currentNode = closestNode(nodes, unvisitedNodes)
     }
